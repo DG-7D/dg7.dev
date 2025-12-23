@@ -98,7 +98,7 @@ WebサーバにはArduino-ESP32同梱の`WebServer.h`を使った。サードパ
 
 ## Web UI
 
-ひとまずテスト用にすべてのパラメータを直打ちしてビット列を生成、送信できる[Web UI](https://github.com/DG-7D/HAS22CRemote)を作成した。同じリポジトリに解析結果のまとめも置いてある。Windows環境だとmDNSの解決が遅いことがあるため、環境変数[`BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS`](https://bun.com/docs/runtime/networking/dns#configuring-dns-cache-ttl)を24時間ほどに設定したうえで、最初に`Bun.dns.prefetch()`でキャッシュを生成しておくことで、毎日使う分には解決待ちを発生させないようにしている。
+ひとまずテスト用にすべてのパラメータを直打ちしてビット列を生成、送信できる[Web UI](https://github.com/DG-7D/HAS22CRemote)を作成した。同じリポジトリに解析結果のまとめも置いてある。Windows環境だとmDNSの解決が遅いことがあるため、~~環境変数[`BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS`](https://bun.com/docs/runtime/networking/dns#configuring-dns-cache-ttl)を24時間ほどに設定したうえで、最初に`Bun.dns.prefetch()`でキャッシュを生成しておくことで、毎日使う分には解決待ちを発生させないようにしている。~~<></>ページを表示した時点で`Bun.dns.prefetch()`を呼んでおくことで、送信ボタンを押すまでの間に名前解決させておくようにした。
 
 ## 動作確認
 
