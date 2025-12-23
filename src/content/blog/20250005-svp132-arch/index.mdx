@@ -76,7 +76,7 @@ mount -m /dev/sda1 /mnt/boot # -mはmkdir
 
 ```bash
 reflector --save /etc/pacman.d/mirrorlist -p https -c JP -l 5 --sort age # ミラー設定
-pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager msedit sudo # お好きなように
+pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager msedit sudo reflector # お好きなように
 ```
 
 もしここでPGP署名のエラーが出た場合は、以下のように更新した後、もう一度`pacstrap`を実行する。
