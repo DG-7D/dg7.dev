@@ -18,7 +18,7 @@ fetch(url, { method: "HEAD" }).then(response => {
 const metadata = await (async () => {
     try {
         const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
-        await Bun.write(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
+        await Bun.write(`./src/content/ogp-cache/${Bun.hash(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
         return metadata;
     } catch (error) {
         console.error(error);
