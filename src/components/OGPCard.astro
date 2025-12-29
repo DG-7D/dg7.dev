@@ -1,1 +1,107 @@
-<div>dummy</div>
+---
+import fetchSiteMetadata from "fetch-site-metadata";
+import Center from "./Center.astro";
+import { getCollection } from "astro:content";
+
+interface Props {
+    url: string;
+}
+
+console.log("OGPCard: " + Astro.props.url);
+
+const url = new URL(Astro.props.url);
+fetch(url, { method: "HEAD" }).then(response => {
+    if (response.status == 404) {
+        throw new Error(`[${response.status}] ${url.toString()}`);
+    }
+});
+const metadata = await (async () => {
+    try {
+        const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+        await Bun.write(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
+        return metadata;
+    } catch (error) {
+        console.error(error);
+        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.data.url === Astro.props.url)).at(0)?.data;
+        if (cachedMetadata) {
+            return cachedMetadata;
+        } else {
+            throw error;
+        }
+    }
+})();
+
+metadata.image && (metadata.image.alt ??= "");
+---
+
+<Center>
+    <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
+        {(metadata.image && <img {...metadata.image} decoding="async" loading="lazy" />) || (metadata.icon && <img src={metadata.icon} alt="" decoding="async" loading="lazy" />)}
+        <div class="detail">
+            <div class="title">{metadata.title}</div>
+            {metadata.description && <div class="description">{metadata.description}</div>}
+        </div>
+        <div class="domain">{url.hostname}</div>
+    </a>
+</Center>
+
+<style lang="scss">
+    $height: 7rem;
+
+    a {
+        border: 0.1rem solid var(--main-shadow);
+        width: 100%;
+        max-width: 30rem;
+        display: grid;
+        grid-template-areas:
+            "img padl padt padr"
+            "img padl detail padr"
+            "img padl padc padr"
+            "img padl domain padr"
+            "img padl padb padr";
+        grid-template-columns: auto 1fr auto 1fr;
+        grid-template-rows: 1fr auto 1fr auto 1fr;
+        text-overflow: ellipsis;
+
+        &:hover {
+            border-color: var(--main-color);
+            background-color: var(--main-shadow);
+        }
+
+        > img {
+            grid-area: img;
+            width: $height;
+            height: $height;
+            object-fit: cover;
+        }
+        > div {
+            padding: 0 0.5rem;
+            grid-area: detail;
+            div.title {
+                font-size: 1.25rem;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                height: 1lh;
+            }
+            div.description {
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                max-height: 2lh;
+            }
+        }
+        > div.domain {
+            grid-area: domain;
+            font-size: 0.9rem;
+            font-family: monospace, sans-serif;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            height: 1lh;
+        }
+    }
+</style>
