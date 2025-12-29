@@ -2,14 +2,14 @@
 import A from "@/components/A.astro";
 import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
-import { getState } from "./blog/_functions";
+// import { getCollection } from "astro:content";
+// import { getState } from "./blog/_functions";
 import Test from "@/components/Test.astro";
 
-const blogPickups = (await getCollection("blog"))
-    .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
-    .filter(post => getState(post) == "published")
-    .slice(0, 3);
+// const blogPickups = (await getCollection("blog"))
+//     .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
+//     .filter(post => getState(post) == "published")
+//     .slice(0, 3);
 
 // TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
@@ -129,7 +129,7 @@ const links: { title: string; url: URL; description: string }[] = [
         <dt>SNS</dt><dd><A href="https://twitter.com/DG_7D">𝕏</A></dd><dd>ほか</dd>
         <dt><a href="/about/">もっと見る</a></dt><dd>自己紹介</dd>
     </dl>
-    <h2>ブログ</h2>
+    <!-- <h2>ブログ</h2>
     <dl class="inline">
         {
             // prettier-ignore
@@ -141,7 +141,7 @@ const links: { title: string; url: URL; description: string }[] = [
             ))
         }
         <dt><a href="/blog/">もっと見る</a></dt><dd>記事一覧</dd>
-    </dl>
+    </dl> -->
     <h2>その他</h2>
     <dl class="inline">
         {
