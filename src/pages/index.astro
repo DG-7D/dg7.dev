@@ -4,6 +4,7 @@ import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { getState } from "./blog/_functions";
+import Test from "@/components/Test.astro";
 
 const blogPickups = (await getCollection("blog"))
     .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
@@ -115,6 +116,7 @@ const links: { title: string; url: URL; description: string }[] = [
 ---
 
 <BaseLayout title="" description="あづみが遊びで作ってる個人サイトってやつです。一生工事中です。">
+    <Test />
     <p><span id="welcome">やっほー、</span>ここは<a href="/about/">あづみ</a>が遊びで作ってる個人サイトってやつです。一生工事中です。サグラダファミリア、あるいは横浜駅。</p>
     <h2>Tips</h2>
     <p id="tips">JavaScriptが有効だとここにはランダムなTipsが表示される。</p>
