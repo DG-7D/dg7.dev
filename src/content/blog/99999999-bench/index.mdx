@@ -1,0 +1,44 @@
+---
+publish: false
+title: "各種ベンチマーク結果まとめ"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: ""
+---
+
+## Cinebench R23
+
+特記なき場合以下の条件は共通。
+
+<dl class="inline">
+    <dt>Cinebench</dt><dd>23.200</dd>
+    <dt>最低測定時間</dt><dd>10分</dd>
+    <dt>OS</dt><dd>Windows 11</dd>
+    <dt>電源</dt><dd>接続</dd>
+    <dt>電源プラン</dt><dd>バランス</dd>
+    <dt>電源モード</dt><dd>最適なパフォーマンス</dd>
+</dl>
+
+| CPU | マルチ | シングル | PC | 備考 | OS |
+| --- | ------ | -------- | -- | ---- | -- |
+| Intel Core i7-4500U | 637 | 471 | SONY SVP132 | CPUとファン: パフォーマンス優先 | 24H2 |
+| Intel Core i5-6300U | 769 | 292 | 富士通 Q736 | クレードル給電、クレードルターボ: 有効 | 24H2 |
+| Intel Core i7-4960HQ | 3377 | 835 | Apple MacBookPro11,3 |  | 25H2 |
+| Intel Core i7-4960HQ | 3416 | 835 | Apple MacBookPro11,3 | 電源: バッテリ、電源モード: 省エネ機能 | 25H2 |
+| Intel Core i7-10710U | 4455 | 1047 | VAIO VJS142 | CPUとファン: パフォーマンス優先 | 24H2 |
+| Intel Core Ultra 5 125U | 6277 | 1601 | Dynabook W6VZHY | 電源プラン: dynabook標準、ノートPCスタイル、<br />dynabook省電力設定: 有効、Thermal Control Alternative Mode: 無効 | 25H2 |
+| Intel Core Ultra 5 125U | 6268 | 1589 | Dynabook W6VZHY | タブレットスタイル、他同上 | 25H2 |
+| Intel Core Ultra 5 125U | 5186 | 881 | Dynabook W6VZHY | 電源: バッテリ、電源モード: 省エネ機能、<br />ノートPCスタイル、Battery Optimized Mode: 無効、他同上 | 25H2 |
+| Intel Core i5-12600K | 15846 | 1820 | MSI MS-7D36 | PL1: 241W、PL2: 241W | 24H2 |
+
+## CrystalDiskMark
+
+| SSD | テスト<br />サイズ | SEQ1M<br />Q8T1 R | SEQ1M<br />Q1T1 R | RND4K<br />Q32T1 R | RND4K<br />Q1T1 R | SEQ1M<br />Q8T1 W | SEQ1M<br />Q1T1 W | RND4K<br />Q32T1 W | RND4K<br />Q1T1 W | バージョン |
+| --- | ------------ | ----------- | ---- | ----------- | ---- | ---------- | ---- | ----------- | ---- | ---------- |
+| Samsung SSD 860 EVO 500GB | 1GiB | 559.60 | 528.82 | 384.82 | 31.62 | 525.47 | 497.93 | 329.30 | 117.67 | 9.0.0 |
+| CSSD-S6B240CG3VX | 1GiB | 548.54 | 509.54 | 323.67 | 35.02 | 505.83 | 480.42 | 330.91 | 75.54 | 9.0.0 |
+| SanDisk SSD PLUS 120GB | 1GiB | 545.71 | 477.99 | 111.19 | 21.67 | 299.02 | 319.11 | 20.02 | 17.17 | 9.0.0 |
+| PLEXTOR PX-256M5S | 1GiB | 542.13 | 501.62 | 291.02 | 28.09 | 390.06 | 392.17 | 261.19 | 65.43 | 9.0.0 |
+| C-E80T512G2-P003D2E19T | 64GiB | 3446.54 | 2102.11 | 406.73 | 28.83 | 2402.90 | 2380.13 | 409.10 | 197.27 | 9.0.1 |
+| Samsung MZVLB512HBJQ-00000 | 64GiB | 3257.64 | 1785.58 | 372.49 | 43.08 | 1362.30 | 1033.12 | 269.43 | 105.13 | 9.0.1 |
+| KIOXIA-EXCERIA G2 | 64GiB | 2074.39 | 1450.52 | 648.81 | 40.26 | 705.18 | 701.45 | 600.87 | 266.76 | 9.0.1 |
+| INTEL SSDPEKKW512GB | 64GiB | 1585.21 | 1334.15 | 337.80 | 41.96 | 1046.32 | 1073.16 | 258.46 | 99.35 | 9.0.1 |
