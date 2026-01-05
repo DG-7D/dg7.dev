@@ -1,7 +1,15 @@
+import { toJpISODateString } from '@/utils/Date.mjs';
 import type { CollectionEntry } from 'astro:content';
 
 export function getSlug(post: CollectionEntry<"blog">): string {
-    return post.id;
+    if (post.data.publishDate.getFullYear() <= 2025) {
+        return post.id;
+    } else {
+        return (
+            toJpISODateString(post.data.publishDate).split("-").join("")
+            + "-"
+            + post.id.split("-").slice(1).join("-"));
+    }
 }
 
 export function getState(post: CollectionEntry<"blog">): "private" | "publishing" | "published" {
