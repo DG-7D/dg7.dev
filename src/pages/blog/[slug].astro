@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getState } from "./_functions";
+import { getSlug, getState } from "./_functions";
 import Img from "@/components/Img.astro";
 import A from "@/components/A.astro";
 import { toJpDateString, toJpISODateString, toJpISODateTimeString } from "@/utils/Date.mjs";
@@ -10,7 +10,7 @@ export async function getStaticPaths() {
         return import.meta.env.DEV || getState(post) == "published";
     });
     return blogEntries.map(entry => ({
-        params: { slug: entry.id },
+        params: { slug: getSlug(entry) },
         props: { entry },
     }));
 }
