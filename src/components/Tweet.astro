@@ -93,7 +93,7 @@ function toTweetUrl(tweet: z.infer<typeof tweetScheme>) {
     return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
 }
 
-console.log("Tweet: " + Astro.props.id)
+// console.log("Tweet: " + Astro.props.id)
 
 const urlSearchParams = new URLSearchParams({
     id: Astro.props.id,
@@ -104,12 +104,12 @@ const tweet = tweetScheme.parse(await (async ()=>{
     try {
         return await fetch(url).then(response => response.json())
     } catch (error) {
-        console.error(error);
         const cachedTweet = (await getCollection("tweet-cache", tweet => tweet.data.id_str == Astro.props.id)).at(0)?.data;
         if (cachedTweet) {
             return cachedTweet;
         } else {
-            throw error;
+            console.error(error);
+            throw new Error(`Tweet: Failed to fetch and no cache found: ${Astro.props.id}`);
         }
     }
 })());
