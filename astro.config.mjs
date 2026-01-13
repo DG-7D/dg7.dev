@@ -23,8 +23,8 @@ export default defineConfig({
   integrations: [
     AutoImport({
       imports: [
-        "/src/components/OGPCard.astro",
-        "/src/components/Tweet.astro",
+        "@/components/OGPCard.astro",
+        "@/components/Tweet.astro",
       ]
     }),
     mdx(),
