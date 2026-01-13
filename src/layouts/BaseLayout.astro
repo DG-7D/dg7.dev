@@ -18,7 +18,9 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
 
 <!doctype html>
 <html lang="ja">
-    <Head {...Astro.props} />
+    <Head {...Astro.props}>
+        {Astro.url.pathname.startsWith("/blog/") && <link rel="alternate" type="application/rss+xml" title="あづみのブログ – あづみのメモ帳" href="/blog/rss.xml" />}
+    </Head>
     <body>
         <Header />
         <main>

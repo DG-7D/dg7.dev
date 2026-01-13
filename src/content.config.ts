@@ -2,17 +2,23 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
+// fetch-site-metadata ImageInfo
 const zodImageInfo = z.object({
     src: z.string(),
     width: z.string().optional(),
     height: z.string().optional(),
     alt: z.string().optional(),
 });
+// fetch-site-metadata Metadata
 const zodMetadata = z.object({
     title: z.string().optional(),
     description: z.string().optional(),
     icon: z.string().optional(),
     image: zodImageInfo.optional(),
+});
+// OGPCache
+const zodOGPCache = zodMetadata.extend({
+    url: z.string().url(),
 });
 
 export const collections = {
@@ -33,6 +39,6 @@ export const collections = {
     }),
     "ogp-cache": defineCollection({
         loader: glob({ pattern: "**/*.json", base: "./src/content/ogp-cache" }),
-        schema: zodMetadata.extend({url: z.string()}),
+        schema: zodOGPCache,
     }),
 };

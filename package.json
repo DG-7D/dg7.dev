@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "5.0.0-beta.1",
+    "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "3.6.1-beta.2",
     "astro": "6.0.0-beta.1",
     "astro-auto-import": "^0.4.5",
