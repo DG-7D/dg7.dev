@@ -11,7 +11,7 @@
   "dependencies": {
     "@astrojs/mdx": "5.0.0-alpha.0",
     "@astrojs/sitemap": "3.6.1-alpha.1",
-    "astro": "6.0.0-alpha.4",
+    "astro": "6.0.0-alpha.5",
     "astro-auto-import": "^0.4.5",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.4",
