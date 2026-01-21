@@ -37,10 +37,12 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
             }
         }
         async function showGov(govText: string) {
-            govBox.textContent = govText;
             govLength.textContent = govText.length.toString();
             govTweet.href = encodeURI(`https://twitter.com/intent/tweet?text=${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･\`)&url=${location.href}`);
-            govBox.scrollTop = govBox.scrollHeight;
+            setTimeout(() => {
+                govBox.textContent = govText;
+                govBox.scrollTop = govBox.scrollHeight;
+            }, 0);
 
             makeGovPromise = makeGov();
         }
