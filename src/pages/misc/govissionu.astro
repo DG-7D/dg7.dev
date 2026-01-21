@@ -10,15 +10,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <div id="govBox" class="bordered"></div>
     <p id="govResult"><span id="govLength"></span>文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました！ <a id="govTweet" href="" target="_blank">ツイート</a> <button class="like-link" id="reGov">もういちど</button></p>
     <script>
-        function random<T>(array: T[]): T {
-            return array[Math.floor(Math.random() * array.length)]!;
-        }
-
         const govs = ["(", "´", "･", "_", "･", "`", ")"];
         const govBox = document.getElementById("govBox")!;
         const govLength = document.getElementById("govLength")!;
         const govTweet = document.getElementById("govTweet")! as HTMLAnchorElement;
         document.getElementById("reGov")!.addEventListener("click", reGov);
+
+        let makeGovPromise = makeGov();
+        await reGov();
 
         async function makeGov() {
             let nextLetter = 0;
@@ -37,16 +36,21 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
             }
         }
         async function showGov(govText: string) {
-            govBox.textContent = govText;
             govLength.textContent = govText.length.toString();
             govTweet.href = encodeURI(`https://twitter.com/intent/tweet?text=${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･\`)&url=${location.href}`);
-            govBox.scrollTop = govBox.scrollHeight;
+            setTimeout(() => {
+                govBox.textContent = govText;
+                govBox.scrollTop = govBox.scrollHeight;
+            }, 0);
+
+            makeGovPromise = makeGov();
         }
         async function reGov() {
-            makeGov().then(govText => showGov(govText));
+            makeGovPromise.then(govText => showGov(govText));
         }
-
-        await reGov();
+        function random<T>(array: T[]): T {
+            return array[Math.floor(Math.random() * array.length)]!;
+        }
     </script>
     <style>
         #govBox {
