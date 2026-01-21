@@ -41,11 +41,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
             govLength.textContent = govText.length.toString();
             govTweet.href = encodeURI(`https://twitter.com/intent/tweet?text=${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･\`)&url=${location.href}`);
             govBox.scrollTop = govBox.scrollHeight;
+
+            makeGovPromise = makeGov();
         }
         async function reGov() {
-            makeGov().then(govText => showGov(govText));
+            makeGovPromise.then(govText => showGov(govText));
         }
 
+        let makeGovPromise = makeGov();
         await reGov();
     </script>
     <style>
