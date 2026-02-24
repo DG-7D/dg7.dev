@@ -4,11 +4,23 @@
 :root {
     color-scheme: light dark;
     --theme-color: var(--green);
-    --background-color: light-dark(var(--bwhite), var(--black));
+    /* --background-color: light-dark(var(--bwhite), var(--black));
     --main-shadow: light-dark(var(--white), var(--bblack));
     --main-color: light-dark(var(--black), var(--bwhite));
     --sub-color: light-dark(var(--bblack), var(--white));
-    --link-color: light-dark(var(--blue), var(--byellow));
+    --link-color: light-dark(var(--blue), var(--byellow)); */
+    --background-color: var(--black);
+    --main-shadow: var(--bblack);
+    --main-color: var(--bwhite);
+    --sub-color: var(--white);
+    --link-color: var(--byellow);
+    @media (prefers-color-scheme: light) {
+        --background-color: var(--bwhite);
+        --main-shadow: var(--white);
+        --main-color: var(--black);
+        --sub-color: var(--bblack);
+        --link-color: var(--blue);
+    }
 }
 
 html {
