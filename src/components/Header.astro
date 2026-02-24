@@ -1,5 +1,5 @@
 ---
-import "@/styles/style.scss";
+import "@/styles/style.css";
 import HeaderLogo from "./HeaderLogo.svg";
 
 const menu = [
@@ -28,7 +28,12 @@ const menu = [
         </ul>
     </nav>
 </header>
-<style lang="scss">
+<style>
+    header > a :global(svg) {
+        /* 直下じゃないと:global()が効かない? */
+        display: block;
+        height: 100cqh;
+    }
     header {
         container: header / size;
         overflow: hidden;
@@ -43,12 +48,12 @@ const menu = [
         background-color: var(--theme-color);
         color: var(--bwhite);
         box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
-        > a {
+        /* > a {
             :global(svg) {
                 display: block;
                 height: 100cqh;
             }
-        }
+        } */
         > nav {
             ul {
                 display: flex;
