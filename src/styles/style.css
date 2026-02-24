@@ -4,11 +4,23 @@
 :root {
     color-scheme: light dark;
     --theme-color: var(--green);
-    --background-color: light-dark(var(--bwhite), var(--black));
+    /* --background-color: light-dark(var(--bwhite), var(--black));
     --main-shadow: light-dark(var(--white), var(--bblack));
     --main-color: light-dark(var(--black), var(--bwhite));
     --sub-color: light-dark(var(--bblack), var(--white));
-    --link-color: light-dark(var(--blue), var(--byellow));
+    --link-color: light-dark(var(--blue), var(--byellow)); */
+    --background-color: var(--black);
+    --main-shadow: var(--bblack);
+    --main-color: var(--bwhite);
+    --sub-color: var(--white);
+    --link-color: var(--byellow);
+    @media (prefers-color-scheme: light) {
+        --background-color: var(--bwhite);
+        --main-shadow: var(--white);
+        --main-color: var(--black);
+        --sub-color: var(--bblack);
+        --link-color: var(--blue);
+    }
 }
 
 html {
@@ -42,7 +54,7 @@ body {
         max-width: 60rem;
     }
 
-    // footer
+    /* footer */
 }
 
 :where(main) {
@@ -52,9 +64,9 @@ body {
     flex-direction: column;
     align-items: stretch;
     gap: var(--gap);
-    $padding-main: 0.75rem;
+    --padding-main: 0.75rem;
 
-    padding: $padding-main;
+    padding: var(--padding-main);
     box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
 
     >* {
@@ -62,12 +74,12 @@ body {
         overflow-wrap: anywhere;
     }
 
-    // ブロック
-    // // 見出し
+    /* ブロック */
+    /* * 見出し */
     >h1 {
-        width: calc(100% + 2 * $padding-main);
-        margin: 0 (-$padding-main);
-        padding: 0 $padding-main;
+        width: calc(100% + 2 * var(--padding-main));
+        margin: 0 calc(-1 * var(--padding-main));
+        padding: 0 var(--padding-main);
         border-bottom: 0.1rem solid var(--theme-color);
         line-height: 120%;
         font-size: 2.5rem;
@@ -75,13 +87,13 @@ body {
         word-break: auto-phrase;
     }
 
-    $hn-overflow: calc($padding-main / 2);
+    --hn-overflow: calc(var(--padding-main) / 2);
 
     >h2,
     >h3 {
-        width: calc(100% + $hn-overflow * 2);
-        margin-left: -$hn-overflow;
-        margin-right: -$hn-overflow;
+        width: calc(100% + var(--hn-overflow) * 2);
+        margin-left: calc(-1 * var(--hn-overflow));
+        margin-right: calc(-1 * var(--hn-overflow));
         border-bottom: 0.1rem solid;
         padding: 0 0.5rem;
     }
@@ -90,19 +102,19 @@ body {
         position: sticky;
         top: var(--header-height);
         z-index: 1645;
-        margin-top: var(--gap); // flexのgapに追加で
+        margin-top: var(--gap); /* flexのgapに追加で */
 
-        border-left: $hn-overflow solid;
+        border-left: var(--hn-overflow) solid;
         background-color: var(--background-color);
         font-size: 1.5rem;
     }
 
     >h3 {
-        border-left: $hn-overflow double;
+        border-left: var(--hn-overflow) double;
     }
 
 
-    // // 本文
+    /* * 本文 */
     p {
         text-indent: 1em;
         text-align: justify;
@@ -126,7 +138,7 @@ body {
         }
     }
 
-    // // リスト
+    /* * リスト */
     ul:not(.inline),
     dl:not(.inline) {
         padding-left: 1em;
@@ -156,8 +168,8 @@ body {
         padding-left: 2em;
 
         >dt {
-            // display: inline list-item; // なぜかSafariだと動かない
-            // list-style: "–\2002" inside;
+            /* display: inline list-item; /* なぜかSafariだと動かない */
+            /* list-style: "–\2002" inside; */
             margin-left: -2em;
             display: inline;
 
@@ -185,7 +197,7 @@ body {
         }
     }
 
-    // // 表
+    /* * 表 */
     div:has(>table) {
         overflow-x: auto;
     }
@@ -209,7 +221,7 @@ body {
     }
 
 
-    // // インライン
+    /* * インライン */
     >* {
 
         a:any-link,
@@ -221,7 +233,7 @@ body {
                 text-decoration-line: underline;
             }
 
-            // &:focus {}
+            /* // &:focus {} */
 
             &:hover {
                 text-decoration-line: none;
