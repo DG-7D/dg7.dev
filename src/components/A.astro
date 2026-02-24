@@ -5,6 +5,10 @@ interface Props {
 }
 
 const external = Astro.props.href.includes("//");
+
+if (external && new URL(Astro.props.href).hostname === "x.com") {
+    Astro.props.href = Astro.props.href.replace("x.com", "twitter.com");
+}
 ---
 
 <a href={Astro.props.href} target={external ? "_blank" : undefined} title={Astro.props.title}><slot /></a>

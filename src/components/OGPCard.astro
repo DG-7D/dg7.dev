@@ -45,8 +45,10 @@ metadata.image && (metadata.image.alt ??= "");
     </a>
 </Center>
 
-<style lang="scss">
-    $height: 7rem;
+<style>
+    * {
+        --height: 7rem;
+    }
 
     a {
         border: 0.1rem solid var(--main-shadow);
@@ -70,8 +72,8 @@ metadata.image && (metadata.image.alt ??= "");
 
         > img {
             grid-area: img;
-            width: $height;
-            height: $height;
+            width: var(--height);
+            height: var(--height);
             object-fit: cover;
         }
         > div {

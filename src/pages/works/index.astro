@@ -1,0 +1,76 @@
+---
+import A from "@/components/A.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const pages: {
+    categoryName: string;
+    categoryDescription: string;
+    pages: {
+        title: string;
+        url?: string;
+        description: string;
+    }[];
+}[] = [
+    {
+        categoryName: "ハードウェア",
+        categoryDescription: "形のあるもの。ちょっとソフトウェア要素もあるかもしれない。",
+        pages: [
+            { title: "赤外線信号送信器", description: "任意の赤外線信号をHTTP API経由で自室で送信できるようにするやつ。", url: "/blog/20250009-esp32-rmt/" },
+            { title: "イヤホンジャック入力サーボ試験基板", description: "PWM信号を音声としてイヤホンジャックから出力し、それを受け取って増幅してサーボを制御できるようにするやつ。信号生成はWeb UI。", url: "/blog/20250001-phone-pwm/" },
+            { title: "RGBファン変換基板", description: "独自端子のRGBファンをマザボのファン端子とARGB端子で制御できるようにするやつ。", url: "/blog/20240010-6pin-fan-pwm/" },
+            { title: "ゆいのクレーンゲーム", description: "電装品と制御ソフトウェアを一部担当。", url: "https://x.com/yui__yuuki/status/1860628058010779704" },
+            { title: "配線整理具", description: "電源コード、ケーブル、ACアダプタやスイッチングハブなどを百均の網や机に固定する物体。色々試行錯誤した。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1864656807597363671" },
+            { title: "ティッシュ箱ホルダ", description: "ティッシュ箱を机に固定するやつ。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1984568348370485380" },
+            { title: "リモコンフック", description: "エアコンのリモコンを壁につけたフックにかけられるようにするやつ。3Dプリンタ製。" },
+            { title: "ハンコン固定ねじ回し", description: "Logicool Driving Force GTの固定ねじを回しやすくするやつ。地味便利。3Dプリンタ製。" },
+            { title: "レンズキャップストラップ固定具", description: "MINOLTA AF REFLEX 500mm F8のレンズキャップが本体から離れないようにストラップを固定するやつ。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1877521560396771775" },
+            { title: "ピンセット立て", description: "工研部室でピンセットをしょぼいペン立てに立てようとしてて地獄の様相だったのでしれっと作っておいた。3Dプリンタ製。" },
+            { title: "キーキャップ引き抜き工具", description: "メカニカルキーボードのキーキャップを引き抜く工具。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1876974595690918118" },
+            { title: "各種補修部品", description: "VAIO付属キーボードのTabキー、ファンクションジェネレータの足、テスタの電池蓋、電源のつまみとか。3Dプリンタ製。" },
+            { title: "テスタ電源スイッチストッパ", description: "テスタの電源が勝手に入らないように押さえておくやつ。今は持ち歩いてないのであまり機能していない。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1936652003427717400" },
+            { title: "照準器", description: "一眼カメラのホットシューにつけられる照準器。絶妙に役に立たない。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1868113147032379752" },
+            { title: "ジャンパ線ケース", description: "ブレッドボードでよく使うジャンパ線をしまうやつ。まっすぐ入れられるので袋にぶちこむよりはマシになった。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1872602614422196529" },
+            { title: "ケーブルケース", description: "持ち運ぶType-Cケーブルとかを折りグセをつけずに小さくまとめたかったやつ。あんまり役に立たなかった。3Dプリンタ製。" },
+            { title: "ケーブルリール", description: "余ったケーブルを巻いておくやつ。3Dプリンタ製。", url: "https://x.com/DG_7D/status/2023949992835027453" },
+            { title: "ドライバケース", description: "もとのやつが崩壊したから作った。あまり小さくできなかったのと、新しいドライバセットを買ったのであんまり使ってない。3Dプリンタ製。", url: "https://x.com/DG_7D/status/1893568387680477631" },
+        ],
+    },
+    {
+        categoryName: "ソフトウェア",
+        categoryDescription: "Webアプリとか。だいたい自分用に作ったもの。",
+        pages: [
+            { title: "あづみのメモ帳", description: "このサイト。", url: "/blog/20231104-blog/" },
+            { title: "雑多なWebアプリ", description: "「その他」にまとめてます。", url: "/misc/" },
+            { title: "エアコン赤外線信号生成器", description: "自室のエアコンのリモコン信号を生成し、先述の赤外線サーバに送信できるWebアプリ。解析がたいへんだった。", url: "/blog/20250009-esp32-rmt/" },
+            { title: "SimpleWoLServer", description: "最低限の機能なWake on LANサーバ。Web UIで操作できる。", url: "https://github.com/DG-7D/SimpleWoLServer" },
+            { title: "Bambu Studio 複数アカウントランチャー", description: "Bambu Studioの設定ファイルを差し替えることで複数アカウントを切り替えられるようにするWindowsアプリ。Rustとか使ってみちゃったり。", url: "https://github.com/DG-7D/BambuStudioMultiAccountLauncher" },
+            { title: "学務情報システム 成績並び替え", description: "電通大の学務情報システムの成績一覧表示を、学期や評定など任意の列で並び替えられるようにするChromium拡張機能。", url: "https://github.com/DG-7D/GakumuJouhouSystem-SortSeiseki" },
+            { title: "ゆいのだじゃれデータベース", description: "ゆいのだじゃれを集めるデータベース。簡単に追加するためのスクリプトなどもある。", url: "https://github.com/DG-7D/YuinoDajare" },
+            { title: "SimpleStepper", description: "Arduino純正のStepperライブラリよりちょっとマシみたいなステッピングモータ駆動ライブラリ。公開はしてない。" },
+        ],
+    },
+];
+---
+
+<BaseLayout title="作ったもの" description="作ったハードウェアとかソフトウェアとかの一覧です。">
+    <p>自分が何作ったか忘れがちなのでメモがてらまとめてみるページです。リンク先はブログかツイートかGitHubあたりです。順番はてきとー。</p>
+    {
+        pages.map(category => (
+            <>
+                <h2>{category.categoryName}</h2>
+                <p>{category.categoryDescription}</p>
+                <dl>
+                    {
+                        // prettier-ignore
+                        category.pages.map(page => (
+                    <>
+                        <dt>{page.url ? <A href={page.url}>{page.title}</A> : page.title}</dt>
+                        <dd>{page.description}</dd>
+                    </>
+                ))
+                    }
+                </dl>
+            </>
+        ))
+    }
+</BaseLayout>
