@@ -12,7 +12,7 @@
     "@astrojs/mdx": "5.0.0-beta.8",
     "@astrojs/rss": "4.0.15-beta.3",
     "@astrojs/sitemap": "3.6.1-beta.3",
-    "astro": "6.0.0-beta.13",
+    "astro": "6.0.0-beta.14",
     "astro-auto-import": "^0.5.1",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^1.1.0",
