@@ -3,7 +3,7 @@ import A from "@/components/A.astro";
 import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { getState } from "./blog/_functions";
+import { getSlug, getState } from "./blog/_functions";
 
 const blogPickups = (await getCollection("blog"))
     .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
@@ -138,7 +138,7 @@ const links: { title: string; url: URL; description: string }[] = [
             // prettier-ignore
             blogPickups.map(post => (
                 <>
-                    <dt><a href={`/blog/${post!.id}/`}>{post!.data.title}</a></dt>
+                    <dt><a href={`/blog/${getSlug(post)}/`}>{post!.data.title}</a></dt>
                     <dd>{post!.data.description}</dd>
                 </>
             ))
