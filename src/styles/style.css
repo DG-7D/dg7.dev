@@ -71,6 +71,10 @@ body {
 
     >* {
         line-height: 150%;
+        text-spacing-trim: trim-start;
+        text-autospace: normal;
+        /* text-autospace: normal replace; */
+        line-break: strict;
         overflow-wrap: anywhere;
     }
 
@@ -132,10 +136,8 @@ body {
         resize: vertical;
         font-family: monospace;
         font-size: 0.9em;
-
-        @supports (text-autospace: no-autospace) {
-            text-autospace: no-autospace;
-        }
+        text-spacing-trim: space-all;
+        text-autospace: no-autospace;
     }
 
     /* * リスト */
@@ -266,12 +268,14 @@ body {
             padding: 0.05em 0.1em;
             font-size: 0.9em;
             font-family: monospace;
+            text-spacing-trim: space-all;
+            text-autospace: no-autospace;
             color: var(--background-color);
             background-color: var(--main-color);
-
-            @supports (text-autospace: no-autospace) {
-                text-autospace: no-autospace;
-            }
+        }
+        
+        time {
+            text-autospace: no-autospace;
         }
     }
 }
