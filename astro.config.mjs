@@ -11,7 +11,6 @@ import rehypeUnwrapImages from 'rehype-unwrap-images';
 export default defineConfig({
   site: "https://dg7.dev/",
   markdown: {
-    // FIXME: まだ壊れてる?
     shikiConfig: {
       theme: "dark-plus",
       wrap: true,
