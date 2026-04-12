@@ -1,0 +1,66 @@
+---
+publish: true
+title: "WindowsでiPhoneのUSBテザリングを現代的な方法で使えるようにしてみた"
+publishDate: 2026-04-12 15:45:00 +09:00
+description: "WindowsでiPhoneのUSBテザリングを使えるようにする手順について、まともな情報源が存在しないので自分で調べてまとめてみた話。"
+---
+
+電気通信大学のキャンパス内では電気も通信もろくに使えないことはよく知られている。また、ただでさえ貧弱な学内Wi-Fiが妨害されてしまうため、(無線による)テザリングはやめろとのお達しがあった。となれば、USB接続によるテザリングを使う必要が生じるのだが、iPhoneのUSBテザリングはただ素のWindowsに接続しただけでは使えない。[公式ドキュメント](https://support.apple.com/ja-jp/111785)を頼りたいところだが、Windowsに関する言及はない。iPhone側の画面にもUSBで繋げとしか表示されない。ネットに散乱する記事はiTunes時代の古文書かすでに環境が整っていた場合の話かAIの落書きかしか見当たらない。参考になる文献が存在しないので、令和最新版iPhoneにおいてUSBテザリングには何がどう必要なのかを自分で整理してみた。
+
+## USBテザリングの使い方
+
+結論を先に述べると、以下の操作でUSBテザリングが使えるようになる。上2つは順不同だが、最後の1つは上2つの後でなければならない。
+
+- iPhoneを接続してWindows Update、再起動を要求されたら刺し直し(再起動は多分不要)
+- 「Appleデバイス」アプリをインストール(Microsoft Store版で可)
+- インターネット共有が有効な状態で再度Windows Update
+
+アプリのインストールもWindows Updateもインターネット接続が必要である。しかし、テザリングを使いたいのは専らインターネット接続がほかにないときであるため、Wi-FiやBluetoothなどUSB以外のテザリングが使えない場合、これらは事前に準備しておく必要がある。
+
+なお、Store版でないiTunesのインストールを勧める記事が目立つが、iTunesは設計が古く挙動がまともでないうえに、特にStore版でないものは[余計なものをボコボコ入れてきて](https://support.apple.com/ja-jp/102018)アンインストールもまともにできないので触らないほうがよい。
+
+## 初期状態
+
+初期状態では、iPhoneは「Apple iPhone」という名の単一のMTPデバイスとして認識される。
+
+![デバイスマネージャ上に「Apple iPhone」デバイスがあり、ドライバとして「WpdMtpDr.dll」、「winusb.sys」、「WpdUpFltr.sys」、「WUDFRd.sys」、「WpdMtp.dll」、「WpdMtpUS.dll」が適用されている。](nothing.png "ドライバもアプリもない状態での見え方")
+
+## iPhone自体のドライバ
+
+この状態でWindows Updateを行うと、`appleusb.inf`がインストールされる。これにより、ルートに現れるのは「Apple Mobile Device USB Composite Device」に変化し、「Apple iPhone」はその下にぶら下がるようになる。インストール後に再起動を要求されるが、実際は刺し直すだけで認識されるようになる。
+
+![ドライバー更新プログラムとして、「Apple, Inc. - USBDevice - 538.0.0.0」がインストールされている。](usb-update.png "Windows Updateで降ってくるiPhone自体のドライバ")
+
+![デバイスマネージャ上に「Apple Mobile Device USB Composite Device」があり、「Apple iPhone」はその下にぶら下がっている。「Apple Mobile Device USB Composite Device」のドライバとして「AppleLowerFilter.sys」と「subccgp.sys」が適用されている。](usb-only.png "iPhone自体のドライバが入った状態での見え方")
+
+なお、このドライバはiTunesにも同梱されている様子はない。インストール中にどこかから拾ってくる可能性もあるが、検証のために触る気にもならないので謎のままにしておく。
+
+## Appleデバイスアプリ
+
+iPhone自体のドライバがあり、かつ、Appleデバイスアプリに含まれる`AppleMobileDeviceProcess.exe`が動作していると、「Apple Mobile Device USB Composite Device」の下に追加で「Apple Mobile Device USB Device」が現れる。
+
+![デバイスマネージャ上に「Apple Mobile Device USB Composite Device」があり、その下に「Apple iPhone」と「Apple Mobile Device USB Device」がぶら下がっている。「Apple Mobile Device USB Device」のドライバとして「AppleKmdfFilter.sys」、「AppleUsbFilter.dll」、「winusb.sys」、「WUDFRd.sys」が適用されている。](usb-app.png "iPhone自体のドライバとAppleデバイスアプリを入れた状態での見え方")
+
+なお、Appleデバイスアプリ自体にはドライバは含まれておらず、先述のドライバがない状態でインストールしても認識に変化はない。また、アプリを起動するとWindows Updateを促される。
+
+![Appleデバイスアプリに「このiPhone用のドライバをインストールするにはWindows Updateが必要です。」と表示されている。](app-only.png "Windows Updateを促すAppleデバイスアプリ")
+
+さらに、`AppleMobileDeviceProcess.exe`が動作していない場合は「Apple Mobile Device USB Device」は現れない。通常はスタートアップに登録されるため起動した状態になっているはずだが、何らかの理由で動作していない場合はAppleデバイスアプリを開くと起動する。
+
+iTunesのこれに相当するものはサービスとして動作するっぽいが、両方入れたらどうなるんだろうか……。
+
+## USBイーサネットのドライバをインストールする
+
+`AppleMobileDeviceProcess.exe`が動作しているかつiPhoneでインターネット共有が有効になっている状態だと、追加で「AppleUSBEthernet」が現れる。この状態でWindows Updateを行うと、`netappl64.inf`がインストールされ、表示名は「Apple Mobile Device Ethernet」になる。
+
+![ドライバー更新プログラムとして、「Apple - Net - 7/15/2013 12:00:00 AM - 1.8.5.1」がインストールされている。](net-update.png "Windows Updateで降ってくるUSBイーサネットのドライバ")
+
+![デバイスマネージャ上に「Apple Mobile Device USB Composite Device」があり、その下に「Apple iPhone」、「Apple Mobile Device Ethernet」、「Apple Mobile Device USB Device」がぶら下がっている。「Apple Mobile Device Ethernet」のドライバとして「netappl64.inf」が適用されている。](usb-app-tether.png "iPhone自体のドライバ、Appleデバイスアプリ、USBイーサネットのドライバが揃った状態での見え方")
+
+なお、このドライバは通常版iTunesに同じバージョンのものが同梱されている。7-zip等で`iTunes64Setup.exe/AppleMobileDeviceSupport64.msi/`を覗けば転がっている。ストア版は知らん。
+
+## あとがき
+
+ネットに繋がるようにするためにはネットが必要です!←何を言ってるんだお前は
+
+AndroidのUSBテザリングはWindows標準ドライバで使えるのだから、iOSもそれくらいできるようにしてくれ……。
