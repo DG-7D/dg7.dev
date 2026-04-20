@@ -1,6 +1,6 @@
-// TODO: 新仕様にする
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
+import { z } from "zod";
 
 // fetch-site-metadata ImageInfo
 const zodImageInfo = z.object({
@@ -18,7 +18,7 @@ const zodMetadata = z.object({
 });
 // OGPCache
 const zodOGPCache = zodMetadata.extend({
-    url: z.string().url(),
+    url: z.url(),
 });
 
 export const collections = {
