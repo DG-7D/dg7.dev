@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "zod";
+import { tweetScheme } from "@/components/tweet.z.ts";
 
 // fetch-site-metadata ImageInfo
 const zodImageInfo = z.object({
@@ -35,7 +36,7 @@ export const collections = {
     // TODO: anyをどうにかする
     "tweet-cache": defineCollection({
         loader: glob({ pattern: "**/*.json", base: "./src/content/tweet-cache" }),
-        schema: z.any(),
+        schema: tweetScheme,
     }),
     "ogp-cache": defineCollection({
         loader: glob({ pattern: "**/*.json", base: "./src/content/ogp-cache" }),
