@@ -53,9 +53,7 @@ const urlSearchParams = new URLSearchParams({
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet = tweetScheme.parse(await (async ()=>{ 
     try {
-        let res = await fetch(url).then(response => response.json());
-        console.log(res);
-        return res;
+        return await fetch(url).then(response => response.json());
     } catch (error) {
         const cachedTweet = (await getCollection("tweet-cache", tweet => tweet.data.id_str == Astro.props.id)).at(0)?.data;
         if (cachedTweet) {
