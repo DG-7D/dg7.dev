@@ -6,15 +6,15 @@ const tweetSchemeWithoutParent = z.object({
     entities: z.object({
         hashtags: z.object({
             text: z.string(),
-        }).array(),
+        }).array().optional(),
         urls: z.object({
             display_url: z.string(),
             expanded_url: z.string().url(),
             url: z.string().url(),
-        }).array(),
+        }).array().optional(),
         user_mentions: z.object({
             screen_name: z.string(),
-        }).array(),
+        }).array().optional(),
         // symbols: z.object({}).array(), //謎
         media: z.object({
             display_url: z.string(),
