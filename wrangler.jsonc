@@ -1,0 +1,15 @@
+{
+    "name": "azumino",
+    "compatibility_date": "2026-05-25",
+    "assets": {
+        "directory": "./dist/"
+    },
+    "preview_urls": true,
+    "workers_dev": false,
+    "routes": [
+        {
+            "pattern": "dg7.dev",
+            "custom_domain": true
+        }
+    ]
+}
