@@ -1,0 +1,81 @@
+---
+publish: false
+title: "個人サイトをCloudflare PagesからCloudflare Workersに移行した話"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: ""
+---
+
+Cloudflare Pagesを使っていたが、Workersでほぼ完全に代替できるようになっている。公式があまりPagesを使ってほしくなさそうなこと、Pagesは色々と苦しい部分もあることから、移行することにした。
+
+## 新規には使わないほうがよい
+
+ただし、Workersのドメインは`プロジェクト名.ユーザ名.workers.dev`と長々しいため、独自ドメインの取得がほぼ必須である。
+
+しかし、`*.pages.dev`がすっきりしているからといって一度でもこのURLを普及させてしまうと、一生このドメインを維持するために余計なPagesのプロジェクトを持っている必要があることになってしまう。
+
+
+
+[公式ページ](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)
+
+`wrangler`コマンドは`bunx`だとまともに動かないことがある。Node.jsが入っている環境だと`bunx`を`--bun`なしで叩いても途中で`node`が呼ばれて動いているように見えることもある。癪だがNode.jsを入れておくとよい。
+
+なお、`bun create cloudflare@latest`が`Checking if a newer version is available ...`で止まることがあるが、これは`--no-auto-update`をつけると回避できる。
+
+`wrangler`コマンドをしばく必要があるように書かれているが、実際にはCloudflare Pagesと同じような使い方をする分には必要ない。
+
+`wrangler.jsonc`みたいな設定ファイルを作る必要があるが、ここにはWorkersのプロジェクト名と成果物のあるディレクトリだけ指定しておけばよい。ほかの`preview_urls`とかはダッシュボード上でも設定できる。
+
+[Astro用のページ](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/)が用意されているが、Pagesと同様、(静的サイトの場合)Astro専用の設定は必要ない。ダッシュボード上でビルドコマンドを設定することができる。
+
+`wrangler deploy`もCloudflare側で実行させることができる。
+
+```json
+{
+    "name": "azumino",
+    "compatibility_date": "2026-05-25",
+    "assets": {
+        "directory": "./dist/",
+        "not_found_handling": "404-page"
+    },
+    "preview_urls": true,
+    "workers_dev": false,
+    "routes": [
+        {
+            "pattern": "dg7.dev",
+            "custom_domain": true
+        }
+    ]
+}
+```
+
+##
+
+まずはWorkers向けの`wrangler.jsonc`が悪さをしないように、もとのPagesのプロジェクトで自動デプロイを無効にするか違うブランチに設定する。
+
+Pagesでは強制的に`*.pages.dev`ドメインが有効になり、独自ドメインを有していてもリダイレクトを設定する必要があったが、Workersの`*.workers.dev`ドメインは無効にすることができる。
+
+Pagesとドメインとの紐付けを切り離し、すぐにWorkersに切り替える。
+
+## リダイレクト設定
+
+以下のような`_redirects`ファイルをルートに配置することで、`*.pages.dev`上のすべてのページから対応する独自ドメインのURLにリダイレクトさせることができる。
+
+```
+/* https://dg7.dev/:splat 301
+```
+
+ブランチを生やしてそっちに切り替えるか、直接アップロードに切り替えるかすることになる。Gitリポジトリと連携したままにしてあると、自動デプロイが有効でなくてもいちいち一覧の上に上がってくるので、直接アップロードに切り替えるのがよい。驚くべきことに、プロジェクトを削除せずにGit連携と直接アップロードとの間を切り替えることはできない。
+
+また、大量のデプロイがあるとPagesのプロジェクトを削除できないというバグもある。公式が回避策として`wrangler`コマンドで[デプロイを削除するスクリプト](https://developers.cloudflare.com/pages/platform/known-issues/#delete-a-project-with-a-high-number-of-deployments)を用意しているが、Linux向けしかなく、また、WSL1ではNode.jsが動かないため、どうあがいても楽には解決できない。こんなことのためにWSL2なぞ用意したくない(Arch Linuxの実機環境があるのをすっかり忘れていた)ので、JavaScriptでforEachして削除を試みた。なお、`wrangler pages deploy list`で取得できるデプロイの数は一度に24件までなため、何度もくり返す必要がある。コマンドの出力を直接取ってくる方法を学ぶのが面倒だったため、ファイルに書き出すのとBunを叩くのとを手動でくり返した。
+
+また、もしブランチを切り替える方法をとる場合、これまた面倒なことに、切り替える前にプッシュしてしまうと、切り替えた後にデプロイを再試行してもproductionに反映されないので注意する。
+
+さらに、直接アップロードの場合、内容の変更はダッシュボードからはできず、`wrangler`コマンドを使う必要がある。特に設定ファイルを用意する必要はなく、`npx wrangler publish path/to/dir/ --project-name=プロジェクト名`でアップロードできる。
+
+##
+
+Workersにもちょっとだけ苦しい点がある。
+
+非本番ブランチのビルドを有効にすると、問答無用ですべてのブランチでビルドが走ってしまう。枠は無料でもかなり余裕があるため実害はないが、あまり気分はよくない。
+
+また、今回は運用まで漕ぎ着けたので問題ないが、多機能すぎてドキュメントもものすごい量なため、情報の取捨選択が求められる。
