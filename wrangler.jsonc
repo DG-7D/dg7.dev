@@ -12,9 +12,5 @@
             "pattern": "dg7.dev",
             "custom_domain": true
         }
-    ],
-    "vars": {
-        "BUN_VERSION": "latest",
-        "TZ": "Asia/Tokyo"
-    }
+    ]
 }
