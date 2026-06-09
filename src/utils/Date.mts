@@ -17,8 +17,7 @@ export function dateToJSTDateTime(date: Date): Temporal.ZonedDateTime {
 }
 
 export function isoStringToJSTDateTime(isoString: string): Temporal.ZonedDateTime {
-    // return Temporal.Instant.from(isoString).toZonedDateTimeISO("Asia/Tokyo"); // Gitの嘘のISO出力をDateは読めるがTemporalは読めない🥺
-    return Temporal.Instant.from(new Date(isoString).toISOString()).toZonedDateTimeISO("Asia/Tokyo");
+    return Temporal.Instant.from(isoString).toZonedDateTimeISO("Asia/Tokyo");
 }
 
 function to02d(num: number): string {

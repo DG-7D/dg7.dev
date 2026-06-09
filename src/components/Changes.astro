@@ -12,7 +12,7 @@ const commits: { date: Temporal.PlainDate; messages: string[] }[] = [];
 let overflow = false;
 let lastDate = new Temporal.PlainDate(2000, 1, 1);
 let currentMessages: string[] = [];
-for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso --first-parent`.lines()) {
+for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso-strict --first-parent`.lines()) {
     const [isoDateTime, message] = line.split(separator);
     if (isoDateTime && message && !message.startsWith("_") && !message.startsWith("Merge")) {
         const date = isoStringToJSTDateTime(isoDateTime).toPlainDate();

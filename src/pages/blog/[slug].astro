@@ -21,7 +21,7 @@ const { Content } = await render(entry);
 
 const publish = dateToJSTDateTime(entry.data.publishDate);
 const lastUpdate = await (async () => {
-    const lastUpdateISO = await Bun.$`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`.text();
+    const lastUpdateISO = (await Bun.$`git log -1 --format="%ad" --date="iso-strict" ./src/content/${entry.collection}/${entry.id}`.text()).trim();
     return lastUpdateISO.length != 0 ? isoStringToJSTDateTime(lastUpdateISO) : undefined;
 })();
 
