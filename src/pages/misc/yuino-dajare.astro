@@ -8,7 +8,7 @@ import A from "@/components/A.astro";
 const databaseScheme = z.object({
     tweets: z
         .object({
-            date: z.string().date(),
+            date: z.string(),
             id: z.string(),
             text: z.string(),
         })
