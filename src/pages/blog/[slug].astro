@@ -5,7 +5,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getSlug, getState } from "./_functions";
 import Img from "@/components/Img.astro";
 import A from "@/components/A.astro";
-import { dateToZonedDateTime, isoStringToZonedDateTime, toJpDateString } from "@/utils/Date.mjs";
+import { dateToJSTDateTime, isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
 export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", post => {
         return import.meta.env.DEV || getState(post) == "published";
@@ -19,10 +19,10 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
-const publish = dateToZonedDateTime(entry.data.publishDate);
+const publish = dateToJSTDateTime(entry.data.publishDate);
 const lastUpdate = await (async () => {
     const lastUpdateISO = await Bun.$`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`.text();
-    return lastUpdateISO.length != 0 ? isoStringToZonedDateTime(lastUpdateISO) : undefined;
+    return lastUpdateISO.length != 0 ? isoStringToJSTDateTime(lastUpdateISO) : undefined;
 })();
 
 const lastUpdateString = (() => {

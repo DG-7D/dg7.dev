@@ -1,6 +1,6 @@
 ---
 import { Temporal } from "temporal-polyfill-lite";
-import { isoStringToZonedDateTime, toJpDateString } from "@/utils/Date.mjs";
+import { isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     count: number;
@@ -15,7 +15,7 @@ let currentMessages: string[] = [];
 for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso --first-parent`.lines()) {
     const [isoDateTime, message] = line.split(separator);
     if (isoDateTime && message && !message.startsWith("_") && !message.startsWith("Merge")) {
-        const date = isoStringToZonedDateTime(isoDateTime).toPlainDate();
+        const date = isoStringToJSTDateTime(isoDateTime).toPlainDate();
         if (!date.equals(lastDate)) {
             if (commits.length === Astro.props.count) {
                 overflow = true;
