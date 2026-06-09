@@ -1,5 +1,6 @@
 ---
-import { toJpDateString } from "@/utils/Date.mjs";
+import { Temporal } from "temporal-polyfill-lite";
+import { isoStringToZonedDateTime, toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     count: number;
@@ -7,14 +8,14 @@ interface Props {
 }
 
 const separator = "\uF8FF";
-const commits: { date: string; message: string }[] = [];
-for await (const line of Bun.$`git log --format=%ad${separator}%s --date=short --first-parent`.lines()) {
+const commits: { date: Temporal.ZonedDateTime; message: string }[] = [];
+for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso --first-parent`.lines()) {
     const [date, message] = line.split(separator);
     if (date && message && !message.startsWith("_") && !message.startsWith("Merge")) {
-        commits.push({ date: date, message: message });
+        commits.push({ date: isoStringToZonedDateTime(date), message: message });
     }
 }
-const history = Object.groupBy(commits, commit => commit.date!);
+const history = Object.groupBy(commits, commit => commit.date.toPlainDate().toString()!);
 const dates = Object.keys(history);
 
 let overflow = false;
@@ -27,9 +28,10 @@ if (dates.length > Astro.props.count) {
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         // prettier-ignore
+        // TODO: もうちょいなんとかする
         dates.map(date => (
             <>
-                <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
+                <dt><time datetime={history[date]![0]!.date.toPlainDate().toString()}>{toJpDateString(history[date]![0]!.date)}</time></dt>
                 {
                     history[date]!.map(commit => (
                         <dd>{commit.message}</dd>

@@ -6,7 +6,7 @@ const allPosts = await getCollection("blog");
 allPosts.sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1));
 
 // TODO: 表示をなんとかする
-import { toJpDateString, toJpISODateTimeString } from "@/utils/Date.mjs";
+import { dateToZonedDateTime, toJpDateString } from "@/utils/Date.mjs";
 ---
 
 <BaseLayout title="あづみのブログ" description="あづみがどうでもいいことを書いたり書かなかったりするブログです。">
@@ -17,13 +17,14 @@ import { toJpDateString, toJpISODateTimeString } from "@/utils/Date.mjs";
             allPosts.map(post => {
                 const state = getState(post);
                 const { publishDate, title, description } = post.data;
+                const publishZdt = dateToZonedDateTime(publishDate);
                 if (import.meta.env.DEV || state == "published") {
                     return (
                         // prettier-ignore
                         <>
                             <dt>
                                 <a href={"/blog/" + getSlug(post) + "/"}>{state != "published" && `${state}: `}{title}</a>
-                                <time datetime={toJpISODateTimeString(publishDate)}>{toJpDateString(publishDate)}</time>
+                                <time datetime={publishZdt.toString()}>{toJpDateString(publishZdt)}</time>
                             </dt>
                             <dd>{description}</dd>
                         </>

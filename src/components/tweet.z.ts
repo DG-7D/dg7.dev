@@ -2,7 +2,7 @@ import { z } from "astro/zod";
 
 // 使わないのは書いてない
 const tweetSchemeWithoutParent = z.object({
-    created_at: z.string(),
+    created_at: z.iso.datetime(),
     entities: z.object({
         hashtags: z.object({
             text: z.string(),

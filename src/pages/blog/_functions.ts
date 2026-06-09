@@ -1,4 +1,4 @@
-import { toJpISODateString } from '@/utils/Date.mjs';
+import { dateToZonedDateTime } from '@/utils/Date.mjs';
 import type { CollectionEntry } from 'astro:content';
 
 export function getSlug(post: CollectionEntry<"blog">): string {
@@ -6,7 +6,7 @@ export function getSlug(post: CollectionEntry<"blog">): string {
         return post.id;
     } else {
         return (
-            toJpISODateString(post.data.publishDate).split("-").join("")
+            dateToZonedDateTime(post.data.publishDate).toPlainDate().toString().split("-").join("")
             + "-"
             + post.id.split("-").slice(1).join("-"));
     }

@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import { getCollection } from "astro:content";
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
-import { toJpDateTimeString } from "@/utils/Date.mjs";
+import { isoStringToZonedDateTime, toJpDateTimeString } from "@/utils/Date.mjs";
 import { tweetScheme } from "./tweet.z.ts";
 
 interface Props {
@@ -127,7 +127,7 @@ tweet.parent && textToHtml(tweet.parent);
                     </video>
                 </div>
         }
-        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(new Date(tweet.created_at))}</a>
+        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(isoStringToZonedDateTime(tweet.created_at))}</a>
     </div>
 </Center>
 <style>
