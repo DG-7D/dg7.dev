@@ -1,8 +1,10 @@
 import { Temporal } from "temporal-polyfill-lite";
 
-export function toJpDateString(date: Temporal.ZonedDateTime): string {
-    const pd = date.toPlainDate();
-    return pd.year + "年" + to02d(pd.month) + "月" + to02d(pd.day) + "日";
+export function toJpDateString(date: Temporal.ZonedDateTime | Temporal.PlainDate): string {
+    if (!(date instanceof Temporal.PlainDate)) {
+        date = date.toPlainDate();
+    }
+    return date.year + "年" + to02d(date.month) + "月" + to02d(date.day) + "日";
 }
 
 export function toJpTimeString(date: Temporal.ZonedDateTime): string {
