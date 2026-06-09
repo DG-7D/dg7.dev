@@ -1,6 +1,7 @@
 ---
+import { Temporal } from "temporal-polyfill-lite";
 import "@/styles/style.css";
-const copylightYear: string = new Date().getFullYear().toString();
+const copylightYear: string = Temporal.Now.zonedDateTimeISO("Asia/Tokyo").year.toString();
 ---
 
 <footer><a href="/about/"><div>© {copylightYear} あづみ</div></a></footer>
