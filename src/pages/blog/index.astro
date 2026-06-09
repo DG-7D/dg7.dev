@@ -6,7 +6,7 @@ const allPosts = await getCollection("blog");
 allPosts.sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1));
 
 // TODO: 表示をなんとかする
-import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
+import { toJpDateString, toJpISODateTimeString } from "@/utils/Date.mjs";
 ---
 
 <BaseLayout title="あづみのブログ" description="あづみがどうでもいいことを書いたり書かなかったりするブログです。">
@@ -23,7 +23,7 @@ import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
                         <>
                             <dt>
                                 <a href={"/blog/" + getSlug(post) + "/"}>{state != "published" && `${state}: `}{title}</a>
-                                <time datetime={toJpISODateString(publishDate)}>{toJpDateString(publishDate)}</time>
+                                <time datetime={toJpISODateTimeString(publishDate)}>{toJpDateString(publishDate)}</time>
                             </dt>
                             <dd>{description}</dd>
                         </>
