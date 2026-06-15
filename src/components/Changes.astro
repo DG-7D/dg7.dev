@@ -12,6 +12,8 @@ const commits: { date: Temporal.PlainDate; messages: string[] }[] = [];
 let overflow = false;
 let lastDate = new Temporal.PlainDate(2000, 1, 1);
 let currentMessages: string[] = [];
+// なぜかラップしないとJSとしてパースされて壊れる???
+await (async () => {
 for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso-strict --first-parent`.lines()) {
     const [isoDateTime, message] = line.split(separator);
     if (isoDateTime && message && !message.startsWith("_") && !message.startsWith("Merge")) {
@@ -30,6 +32,7 @@ for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso-str
         currentMessages.push(message);
     }
 }
+})();
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
