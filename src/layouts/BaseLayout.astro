@@ -25,18 +25,10 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
         <Header />
         <main>
             <Breadcrumb />
-            <h1>{title ?? siteName}</h1>
-            {!title && <div></div> /* gap分余白追加 */}
+            <h1 style={!title && { display: "none" }}>{title ?? siteName}</h1>
+            {!title && <div /> /* gap分余白追加 */}
             <slot />
         </main>
         <Footer />
     </body>
 </html>
-{
-    !title &&
-    <style>
-        h1 {
-            display: none;
-        }
-    </style>
-}
