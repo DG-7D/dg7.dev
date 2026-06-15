@@ -122,7 +122,7 @@ tweet.parent && textToHtml(tweet.parent);
                     <video controls controlslist="nodownload " poster={tweet.video.poster}>
                         {tweet.video.variants.reverse().map(variant => (
                             // なぜかtag=12があると途中で止まることがある
-                            <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
+                            <source src={variant.src.replace("?tag=12","")} type={variant.type} />
                         ))}
                     </video>
                 </div>
@@ -132,6 +132,8 @@ tweet.parent && textToHtml(tweet.parent);
 </Center>
 <style>
     div.embedded-tweet {
+        text-align: initial;
+
         --main-color: rgb(247, 249, 249);
         --sub-color: rgb(139, 152, 165);
         --link-color: rgb(29, 115, 240);
