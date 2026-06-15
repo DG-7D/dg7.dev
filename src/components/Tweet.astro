@@ -122,7 +122,7 @@ tweet.parent && textToHtml(tweet.parent);
                     <video controls controlslist="nodownload " poster={tweet.video.poster}>
                         {tweet.video.variants.reverse().map(variant => (
                             // なぜかtag=12があると途中で止まることがある
-                            <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
+                            <source src={variant.src.replace("?tag=12","")} type={variant.type} />
                         ))}
                     </video>
                 </div>
