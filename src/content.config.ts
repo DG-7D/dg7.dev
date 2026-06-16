@@ -33,7 +33,6 @@ export const collections = {
             // tags: z.array(z.string()),
         })
     }),
-    // TODO: anyをどうにかする
     "tweet-cache": defineCollection({
         loader: glob({ pattern: "**/*.json", base: "./src/content/tweet-cache" }),
         schema: tweetScheme,

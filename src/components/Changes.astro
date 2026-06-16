@@ -1,38 +1,48 @@
 ---
-import { toJpDateString } from "@/utils/Date.mjs";
+import { Temporal } from "temporal-polyfill-lite";
+import { isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     count: number;
     inline?: boolean;
 }
 
-const separator = "\uF8FF";
-const commits: { date: string; message: string }[] = [];
-for await (const line of Bun.$`git log --format=%ad${separator}%s --date=short --first-parent`.lines()) {
-    const [date, message] = line.split(separator);
-    if (date && message && !message.startsWith("_") && !message.startsWith("Merge")) {
-        commits.push({ date: date, message: message });
-    }
-}
-const history = Object.groupBy(commits, commit => commit.date!);
-const dates = Object.keys(history);
+await Promise.resolve(); // for awaitがawait判定されなくて壊れるのでダミーのawait
 
+const separator = "\uF8FF";
+const commits: { date: Temporal.PlainDate; messages: string[] }[] = [];
 let overflow = false;
-if (dates.length > Astro.props.count) {
-    overflow = true;
-    dates.splice(Astro.props.count);
+let lastDate = new Temporal.PlainDate(2000, 1, 1);
+let currentMessages: string[] = [];
+for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso-strict --first-parent`.lines()) {
+    const [isoDateTime, message] = line.split(separator);
+    if (isoDateTime && message && !message.startsWith("_") && !message.startsWith("Merge")) {
+        const date = isoStringToJSTDateTime(isoDateTime).toPlainDate();
+        if (!date.equals(lastDate)) {
+            if (commits.length === Astro.props.count) {
+                overflow = true;
+                break;
+            }
+
+            currentMessages = [];
+            commits.push({ date: date, messages: currentMessages });
+        }
+        lastDate = date;
+
+        currentMessages.push(message);
+    }
 }
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         // prettier-ignore
-        dates.map(date => (
+        commits.map(({ date, messages }) => (
             <>
-                <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
+                <dt><time datetime={date.toString()}>{toJpDateString(date)}</time></dt>
                 {
-                    history[date]!.map(commit => (
-                        <dd>{commit.message}</dd>
+                    messages.map(message => (
+                        <dd>{message}</dd>
                     ))
                 }
             </>

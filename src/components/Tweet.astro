@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import { getCollection } from "astro:content";
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
-import { toJpDateTimeString } from "@/utils/Date.mjs";
+import { isoStringToJSTDateTime, toJpDateTimeString } from "@/utils/Date.mjs";
 import { tweetScheme } from "./tweet.z.ts";
 
 interface Props {
@@ -122,16 +122,18 @@ tweet.parent && textToHtml(tweet.parent);
                     <video controls controlslist="nodownload " poster={tweet.video.poster}>
                         {tweet.video.variants.reverse().map(variant => (
                             // なぜかtag=12があると途中で止まることがある
-                            <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
+                            <source src={variant.src.replace("?tag=12","")} type={variant.type} />
                         ))}
                     </video>
                 </div>
         }
-        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(new Date(tweet.created_at))}</a>
+        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(isoStringToJSTDateTime(tweet.created_at))}</a>
     </div>
 </Center>
 <style>
     div.embedded-tweet {
+        text-align: initial;
+
         --main-color: rgb(247, 249, 249);
         --sub-color: rgb(139, 152, 165);
         --link-color: rgb(29, 115, 240);

@@ -1,10 +1,11 @@
 ---
+import { Temporal } from "temporal-polyfill-lite";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getSlug, getState } from "./_functions";
 import Img from "@/components/Img.astro";
 import A from "@/components/A.astro";
-import { toJpDateString, toJpISODateString, toJpISODateTimeString } from "@/utils/Date.mjs";
+import { dateToJSTDateTime, isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
 export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", post => {
         return import.meta.env.DEV || getState(post) == "published";
@@ -18,24 +19,24 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
-const publish = entry.data.publishDate;
+const publish = dateToJSTDateTime(entry.data.publishDate);
 const lastUpdate = await (async () => {
-    const lastUpdateISO = await Bun.$`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`.text();
-    return lastUpdateISO.length != 0 ? new Date(lastUpdateISO) : undefined;
+    const lastUpdateISO = (await Bun.$`git log -1 --format="%ad" --date="iso-strict" ./src/content/${entry.collection}/${entry.id}`.text()).trim();
+    return lastUpdateISO.length != 0 ? isoStringToJSTDateTime(lastUpdateISO) : undefined;
 })();
 
 const lastUpdateString = (() => {
-    if (!lastUpdate || lastUpdate < publish) {
+    if (!lastUpdate || Temporal.ZonedDateTime.compare(lastUpdate, publish) < 0) {
         return undefined;
     }
     const string = toJpDateString(lastUpdate);
-    if (publish.getFullYear() != lastUpdate.getFullYear()) {
+    if (publish.year != lastUpdate.year) {
         return string;
     }
-    if (publish.getMonth() != lastUpdate.getMonth()) {
+    if (publish.month != lastUpdate.month) {
         return string.slice(5, 11);
     }
-    if (publish.getDate() != lastUpdate.getDate()) {
+    if (publish.day != lastUpdate.day) {
         return string.slice(8, 11);
     }
     return undefined;
@@ -44,11 +45,11 @@ const lastUpdateString = (() => {
 
 <BaseLayout title={entry.data.title} description={entry.data.description}>
     <div class="publishDate">
-        <time datetime={toJpISODateString(publish)}>{toJpDateString(publish)}</time>
+        <time datetime={publish.toString()}>{toJpDateString(publish)}</time>
         {
             lastUpdateString && (
                 <>
-                    (最終更新: <time datetime={toJpISODateTimeString(lastUpdate!)}>{lastUpdateString}</time>)
+                    (最終更新: <time datetime={lastUpdate!.toString()}>{lastUpdateString}</time>)
                 </>
             )
         }

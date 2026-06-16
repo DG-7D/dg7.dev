@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
@@ -15,12 +16,15 @@ export default defineConfig({
       theme: "dark-plus",
       wrap: true,
     },
-    rehypePlugins: [
-      [rehypeWrapAll, { selector: "table", wrap: "div" }],
-      rehypeUnwrapImages,
-    ],
+    processor: unified({
+      rehypePlugins: [
+        [rehypeWrapAll, { selector: "table", wrap: "div" }],
+        rehypeUnwrapImages,
+      ],
+    }),
   },
   integrations: [
+    // ↓こいつのせいでdeprecatedな`markdown.なんちゃら`の警告が出る
     AutoImport({
       imports: [
         "@/components/OGPCard.astro",
@@ -33,5 +37,8 @@ export default defineConfig({
   ],
   prefetch: {
     prefetchAll: true,
+  },
+  experimental: {
+    rustCompiler: true,
   },
 });

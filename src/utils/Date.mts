@@ -1,26 +1,25 @@
-const jpTimezoneOffset = 9 * 60 * 60 * 1000;
+import { Temporal } from "temporal-polyfill-lite";
 
-export function toJpISODateTimeString(date: Date): string {
-    return new Date(date.getTime() + jpTimezoneOffset).toISOString().slice(0, -1) + "+09:00";
+export function toJpDateString(date: Temporal.ZonedDateTime | Temporal.PlainDateTime | Temporal.PlainDate): string {
+    return date.year + "年" + to02d(date.month) + "月" + to02d(date.day) + "日";
 }
 
-export function toJpISODateString(date: Date): string {
-    return new Date(date.getTime() + jpTimezoneOffset).toISOString().slice(0, 10);
+export function toJpTimeString(date: Temporal.ZonedDateTime | Temporal.PlainDateTime | Temporal.PlainTime): string {
+    return to02d(date.hour) + "時" + to02d(date.minute) + "分";
 }
 
-export function toJpDateString(date: Date | string): string {
-    const dateArray = date instanceof Date
-        ? toJpISODateString(date).split("-")
-        : date.split("-");
-    return dateArray[0] + "年" + dateArray[1] + "月" + dateArray[2] + "日";
-}
-
-export function toJpTimeString(date: Date): string {
-    const [, timeString] = toJpISODateTimeString(date).split("T");
-    const [hour, minute,] = timeString!.split(":");
-    return hour + "時" + minute + "分";
-}
-
-export function toJpDateTimeString(date: Date): string {
+export function toJpDateTimeString(date: Temporal.ZonedDateTime | Temporal.PlainDateTime): string {
     return toJpDateString(date) + " " + toJpTimeString(date);
+}
+
+export function dateToJSTDateTime(date: Date): Temporal.ZonedDateTime {
+    return isoStringToJSTDateTime(date.toISOString());
+}
+
+export function isoStringToJSTDateTime(isoString: string): Temporal.ZonedDateTime {
+    return Temporal.Instant.from(isoString).toZonedDateTimeISO("Asia/Tokyo");
+}
+
+function to02d(num: number): string {
+    return num.toString().padStart(2, "0");
 }
