@@ -5,29 +5,30 @@ publishDate: 9999-12-31 00:00:00 +09:00
 description: ""
 ---
 
-Cloudflare Pagesを使っていたが、Workersでほぼ完全に代替できるようになっている。公式があまりPagesを使ってほしくなさそうなこと、Pagesは色々と苦しい部分もあることから、移行することにした。
+Webサイトを無料でホストしてくれるサービスとして、Cloudflare Pagesが有名であり、このサイトでもPagesを使っていた。しかし、実は現在Pagesは古いサービスというような扱いになっており、Workersでほぼ完全に代替できるようになっている。公式があまりPagesを使ってほしくなさそうなこと、Pagesは色々と苦しい部分もあることから、このサイトも移行することにした。
 
-## 新規には使わないほうがよい
+## PagesとWorkersの違い
 
-ただし、Workersのドメインは`プロジェクト名.ユーザ名.workers.dev`と長々しいため、独自ドメインの取得がほぼ必須である。
+機能だけを見れば、WorkersはPagesの上位互換である。Workersはサーバ側で何か処理をするためのものというイメージが強く、Pagesとは排他的な関係にあるように思っていた。もちろんそういう機能もあるが、同時に、Pagesのような静的サイトのホスト機能も存在する。PagesでできるほとんどのことはWorkersでもでき、公式としては[移行ページ](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)を設けていたり新規作成画面ではPagesを隅に追いやっていたりと、Workersのほうに統一していきたいような雰囲気となっている。
 
-しかし、`*.pages.dev`がすっきりしているからといって一度でもこのURLを普及させてしまうと、一生このドメインを維持するために余計なPagesのプロジェクトを持っている必要があることになってしまう。
+分かりやすい違いとしては無料で使えるサブドメインがあり、Pagesでは`*.pages.dev`(`*`はプロジェクト名)と比較的すっきりしたドメインだったのに対し、Workersでは`*.*.workers.dev`(1つめの`*`はプロジェクト名、2つめの`*`はユーザ単位で設定する文字列)と長々しいドメインになっていることがある。また、Pagesではこのドメインを無効にすることはできず、独自ドメインを使う場合はリダイレクトする必要があったのに対し、Workersではこのドメインを無効にすることができる。`*.pages.dev`は一見魅力的だが、後述する問題のため独自ドメインを使うことがほぼ必須であるため、これをもってPagesを選択するのは得策ではない。
 
+なんとなくWorkersは難しそうに見えるが、実際はほとんど同じように運用することができる。Pagesは基本的にCloudflare側がビルド、デプロイしてくれることが前提になっており、こちらがすることはGitHubリポジトリにプッシュするだけ、という運用が基本だった。一方、Workersではドキュメントの節々に`wrangler`コマンドが登場し、ローカルでいろいろ頑張る必要があるような印象を受ける。しかし、実際にはWorkersでもCloudflare側でビルド、デプロイをさせることはできるし、逆に、Pagesでローカルからデプロイすることもできていた。
 
+Pagesでは特にPages用の設定ファイルを用意する必要などはなく、ローカルでビルドできる状態のリポジトリをそのままアップロードし、Webのダッシュボード上でビルドの設定などを行った。一方、WorkersではWeb上の設定のほか`wrangler.jsonc`という設定ファイルが存在し、設定項目はWebだけで設定できるもの、ファイルだけで設定できるもの、両方で設定できるもの、の3種類存在する。ビルドコマンドをファイルで設定することはできず、ファイルで設定するのは、Workers自体の設定というよりは、デプロイに使用する`wrangler`コマンドの動作の設定という印象である。静的ファイルのホスト以外にも様々な機能があるため、設定項目も多いのだろう。
 
-[公式ページ](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)
+| 項目 | Pages | Workers |
+| --- | --- | --- |
+| ビルドコマンド、環境変数等 | Webで設定 | Webで設定 |
+| デプロイ | Webで成果物ディレクトリを指定 | Webでコマンドを設定、<br />ファイルでディレクトリ等指定 |
+| 無料ドメインの使用 | 強制有効 | Webまたはファイルで指定 |
+| 独自ドメインの使用 | Webで設定 | Webまたはファイルで指定 |
 
-`wrangler`コマンドは`bunx`だとまともに動かないことがある。Node.jsが入っている環境だと`bunx`を`--bun`なしで叩いても途中で`node`が呼ばれて動いているように見えることもある。癪だがNode.jsを入れておくとよい。
+## 設定ファイルを書く
 
-なお、`bun create cloudflare@latest`が`Checking if a newer version is available ...`で止まることがあるが、これは`--no-auto-update`をつけると回避できる。
+基本的に[公式ページ](https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/)に従って`wrangler.jsonc`を作る。[Astro用のページ](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/)も用意されているが、Pagesと同様、(静的サイトの場合)ビルドコマンドの指定を除いてAstro専用に何かする必要はない。
 
-`wrangler`コマンドをしばく必要があるように書かれているが、実際にはCloudflare Pagesと同じような使い方をする分には必要ない。
-
-`wrangler.jsonc`みたいな設定ファイルを作る必要があるが、ここにはWorkersのプロジェクト名と成果物のあるディレクトリだけ指定しておけばよい。ほかの`preview_urls`とかはダッシュボード上でも設定できる。
-
-[Astro用のページ](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/)が用意されているが、Pagesと同様、(静的サイトの場合)Astro専用の設定は必要ない。ダッシュボード上でビルドコマンドを設定することができる。
-
-`wrangler deploy`もCloudflare側で実行させることができる。
+ここで、`name`はWorkersプロジェクトの名前と一致させる必要があり、ASCII小文字か数字かハイフンマイナスのみ使用できる。また、`preview_urls`(プロダクションブランチ以外のデプロイ)、`workers_dev`(無料サブドメインの使用)、`routes`(独自ドメインの使用)はWeb上でも設定できる。
 
 ```json
 {
@@ -48,17 +49,19 @@ Cloudflare Pagesを使っていたが、Workersでほぼ完全に代替できる
 }
 ```
 
-##
+## プロジェクトを作る
 
-まずはWorkers向けの`wrangler.jsonc`が悪さをしないように、もとのPagesのプロジェクトで自動デプロイを無効にするか違うブランチに設定する。
+まずはもとのPagesプロジェクトで余計なビルドが走らないように、自動デプロイを無効にするか違うブランチに設定したうえで、`wrangler.jsonc`を追加したコミットをプッシュする。
 
-Pagesでは強制的に`*.pages.dev`ドメインが有効になり、独自ドメインを有していてもリダイレクトを設定する必要があったが、Workersの`*.workers.dev`ドメインは無効にすることができる。
+続けて新しいWorkersプロジェクトを作る。GitHubリポジトリを指定し、ビルドコマンドをPagesのときと同じように指定し(自分の場合`git fetch --unshallow`とか入れている)、デプロイコマンドはそのままにする(`npx wrangler deploy`、後述の理由で`bunx`はやめたほうがいいかも)。
 
-Pagesとドメインとの紐付けを切り離し、すぐにWorkersに切り替える。
+Pagesですでに使っているドメインを`wrangler.jsonc`で指定していて有効になっていない(どういう画面だったか覚えてないが)ので、Pagesとドメインとの紐付けを切り離した後、すぐにWorkersで有効化する。もし切り離した状態でDNSがキャッシュされてしまうと、TTLの長いネガティブキャッシュになってしばらく存在しないことになってしまうため、できるだけ素早く。
 
 ## リダイレクト設定
 
-以下のような`_redirects`ファイルをルートに配置することで、`*.pages.dev`上のすべてのページから対応する独自ドメインのURLにリダイレクトさせることができる。
+自分は独自ドメンを取得せず`*.pages.dev`のドメインで運用していた時期があり、各所にこのURLへのリンクが存在してしまっているため、Workersに切り替えた後もこのドメインを維持する必要がある。このドメインはPagesプロジェクト以外からは利用できないため、リダイレクトのためだけのPagesプロジェクトを一生保持する必要が生じてしまったことになる。このような惨事を防ぐため、これから個人サイトを作る人は独自ドメインを取得しておくことを強くおすすめする。
+
+さて、リダイレクトの方法だが、以下のような`_redirects`ファイルをルートに配置することで、`*.pages.dev`上のすべてのページから対応する独自ドメインのURLにリダイレクトさせることができる。
 
 ```
 /* https://dg7.dev/:splat 301
@@ -66,7 +69,17 @@ Pagesとドメインとの紐付けを切り離し、すぐにWorkersに切り�
 
 ブランチを生やしてそっちに切り替えるか、直接アップロードに切り替えるかすることになる。Gitリポジトリと連携したままにしてあると、自動デプロイが有効でなくてもいちいち一覧の上に上がってくるので、直接アップロードに切り替えるのがよい。驚くべきことに、プロジェクトを削除せずにGit連携と直接アップロードとの間を切り替えることはできない。
 
-また、大量のデプロイがあるとPagesのプロジェクトを削除できないというバグもある。公式が回避策として`wrangler`コマンドで[デプロイを削除するスクリプト](https://developers.cloudflare.com/pages/platform/known-issues/#delete-a-project-with-a-high-number-of-deployments)を用意しているが、Linux向けしかなく、また、WSL1ではNode.jsが動かないため、どうあがいても楽には解決できない。こんなことのためにWSL2なぞ用意したくない(Arch Linuxの実機環境があるのをすっかり忘れていた)ので、JavaScriptでforEachして削除を試みた。なお、`wrangler pages deploy list`で取得できるデプロイの数は一度に24件までなため、何度もくり返す必要がある。コマンドの出力を直接取ってくる方法を学ぶのが面倒だったため、ファイルに書き出すのとBunを叩くのとを手動でくり返した。
+`wrangler`コマンドは`bunx`だとまともに動かないことがある。Node.jsが入っている環境だと`bunx`を`--bun`なしで叩いても途中で`node`が呼ばれて動いているように見えることもある。癪だがNode.jsを入れておくとよい。
+
+なお、`bun create cloudflare@latest`が`Checking if a newer version is available ...`で止まることがあるが、これは`--no-auto-update`をつけると回避できる。
+
+`wrangler`コマンドをしばく必要があるように書かれているが、実際にはCloudflare Pagesと同じような使い方をする分には必要ない。
+
+`wrangler deploy`もCloudflare側で実行させることができる。
+
+また、大量のデプロイがあるとPagesのプロジェクトを削除できないというバグもある。公式が回避策として`wrangler`コマンドで[デプロイを削除するスクリプト](https://developers.cloudflare.com/pages/platform/known-issues/#delete-a-project-with-a-high-number-of-deployments)を用意しているが、シェルスクリプトしかなく、また、WSL1ではNode.jsが動かないため、手元の環境では動かせなかった。こんなことのためにWSL2なぞ用意したくないので、JavaScriptで似たようなものを雑に書いた。なお、`wrangler pages deploy list`で取得できるデプロイの数は一度に24件までなため、何度もくり返す必要があった(公式スクリプトでも無限ループで囲まれている)。
+
+なお、忘れていただけでArch Linuxの実機環境はあるのでそこでなら公式のスクリプトを回せたはずだし、そうでなくとも、Bunのシェル機能やGit付属の環境やBusyBox for Windowsを使えばWindows上でもシェルスクリプトは使えるはずなので、自力で実装する必要はあまりなかった。
 
 また、もしブランチを切り替える方法をとる場合、これまた面倒なことに、切り替える前にプッシュしてしまうと、切り替えた後にデプロイを再試行してもproductionに反映されないので注意する。
 
