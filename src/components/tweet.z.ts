@@ -2,15 +2,15 @@ import { z } from "astro/zod";
 
 // 使わないのは書いてない
 const tweetSchemeWithoutParent = z.object({
-    created_at: z.string(),
+    created_at: z.iso.datetime(),
     entities: z.object({
         hashtags: z.object({
             text: z.string(),
         }).array().optional(),
         urls: z.object({
             display_url: z.string(),
-            expanded_url: z.string().url(),
-            url: z.string().url(),
+            expanded_url: z.url(),
+            url: z.url(),
         }).array().optional(),
         user_mentions: z.object({
             screen_name: z.string(),
@@ -18,8 +18,8 @@ const tweetSchemeWithoutParent = z.object({
         // symbols: z.object({}).array(), //謎
         media: z.object({
             display_url: z.string(),
-            expanded_url: z.string().url(),
-            url: z.string().url(),
+            expanded_url: z.url(),
+            url: z.url(),
         }).array().optional(),
     }),
     id_str: z.string(),
@@ -27,13 +27,13 @@ const tweetSchemeWithoutParent = z.object({
     user: z.object({
         id_str: z.string(),
         name: z.string(),
-        profile_image_url_https: z.string().url(),
+        profile_image_url_https: z.url(),
         screen_name: z.string(),
     }),
     // parent: ,
     photos: z.object({
-        expandedUrl: z.string().url(),
-        url: z.string().url(),
+        expandedUrl: z.url(),
+        url: z.url(),
         width: z.number(),
         height: z.number(),
     }).array().optional(),
@@ -42,7 +42,7 @@ const tweetSchemeWithoutParent = z.object({
         poster: z.string(),
         variants: z.object({
             type: z.string(),
-            src: z.string().url(),
+            src: z.url(),
         }).array(),
     }).optional(),
 })
