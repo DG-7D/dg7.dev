@@ -15,10 +15,11 @@ const pages = [
     <p>そのほかの作ったWebアプリとかの一覧です。</p>
     <dl>
         {
-            // prettier-ignore
             pages.map(page => (
                 <>
-                    <dt><a href={page.url}>{page.title}</a></dt>
+                    <dt>
+                        <a href={page.url}>{page.title}</a>
+                    </dt>
                     <dd>{page.description}</dd>
                 </>
             ))
