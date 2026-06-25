@@ -140,10 +140,11 @@ const links: { title: string; url: URL; description: string }[] = [
     <h2>ブログ</h2>
     <dl class="inline">
         {
-            // prettier-ignore
             blogPickups.map(post => (
                 <>
-                    <dt><a href={`/blog/${getSlug(post)}/`}>{post!.data.title}</a></dt>
+                    <dt>
+                        <a href={`/blog/${getSlug(post)}/`}>{post!.data.title}</a>
+                    </dt>
                     <dd>{post!.data.description}</dd>
                 </>
             ))
@@ -157,10 +158,11 @@ const links: { title: string; url: URL; description: string }[] = [
     <h2>その他</h2>
     <dl class="inline">
         {
-            // prettier-ignore
             miscPickups.map(page => (
                 <>
-                    <dt><a href={page.url}>{page.title}</a></dt>
+                    <dt>
+                        <a href={page.url}>{page.title}</a>
+                    </dt>
                     <dd>{page.description}</dd>
                 </>
             ))
@@ -171,25 +173,35 @@ const links: { title: string; url: URL; description: string }[] = [
     <p>知り合いのサイト。なんか全員工研。</p>
     <dl class="inline">
         {
-            // prettier-ignore
-            otakuSites.map(link =>
+            otakuSites.map(link => (
                 <>
-                    <dt><a href={link.url} target="_blank">{link.title}</a></dt>
-                    <dd><Fragment set:html={link.description} /></dd>
+                    <dt>
+                        <a href={link.url} target="_blank">
+                            {link.title}
+                        </a>
+                    </dt>
+                    <dd>
+                        <Fragment set:html={link.description} />
+                    </dd>
                 </>
-            )
+            ))
         }
     </dl>
     <p>その他のおすすめとかメモとか。</p>
     <dl class="inline">
         {
-            // prettier-ignore
-            links.map(link =>
+            links.map(link => (
                 <>
-                    <dt><a href={link.url} target="_blank">{link.title}</a></dt>
-                    <dd><Fragment set:html={link.description} /></dd>
+                    <dt>
+                        <a href={link.url} target="_blank">
+                            {link.title}
+                        </a>
+                    </dt>
+                    <dd>
+                        <Fragment set:html={link.description} />
+                    </dd>
                 </>
-            )
+            ))
         }
     </dl>
     <h2>更新履歴</h2>

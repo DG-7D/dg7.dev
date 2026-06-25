@@ -20,10 +20,12 @@ import { dateToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
                 const publishZdt = dateToJSTDateTime(publishDate);
                 if (import.meta.env.DEV || state == "published") {
                     return (
-                        // prettier-ignore
                         <>
                             <dt>
-                                <a href={"/blog/" + getSlug(post) + "/"}>{state != "published" && `${state}: `}{title}</a>
+                                <a href={"/blog/" + getSlug(post) + "/"}>
+                                    {state != "published" && `${state}: `}
+                                    {title}
+                                </a>
                                 <time datetime={publishZdt.toString()}>{toJpDateString(publishZdt)}</time>
                             </dt>
                             <dd>{description}</dd>
