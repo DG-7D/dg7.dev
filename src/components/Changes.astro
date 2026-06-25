@@ -7,8 +7,6 @@ interface Props {
     inline?: boolean;
 }
 
-await Promise.resolve(); // for awaitがawait判定されなくて壊れるのでダミーのawait
-
 const separator = "\uF8FF";
 const commits: { date: Temporal.PlainDate; messages: string[] }[] = [];
 let overflow = false;
@@ -36,24 +34,24 @@ for await (const line of Bun.$`git log --format=%ad${separator}%s --date=iso-str
 
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
-        // prettier-ignore
         commits.map(({ date, messages }) => (
             <>
-                <dt><time datetime={date.toString()}>{toJpDateString(date)}</time></dt>
-                {
-                    messages.map(message => (
-                        <dd>{message}</dd>
-                    ))
-                }
+                <dt>
+                    <time datetime={date.toString()}>{toJpDateString(date)}</time>
+                </dt>
+                {messages.map(message => (
+                    <dd>{message}</dd>
+                ))}
             </>
         ))
     }
     {
-        // prettier-ignore
         overflow && (
             <>
                 <dt>それ以前</dt>
-                <dd><a href="/changes/">もっと見る</a></dd>
+                <dd>
+                    <a href="/changes/">もっと見る</a>
+                </dd>
             </>
         )
     }

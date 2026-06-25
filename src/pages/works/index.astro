@@ -60,15 +60,12 @@ const pages: {
                 <h2>{category.categoryName}</h2>
                 <p>{category.categoryDescription}</p>
                 <dl>
-                    {
-                        // prettier-ignore
-                        category.pages.map(page => (
-                    <>
-                        <dt>{page.url ? <A href={page.url}>{page.title}</A> : page.title}</dt>
-                        <dd>{page.description}</dd>
-                    </>
-                ))
-                    }
+                    {category.pages.map(page => (
+                        <>
+                            <dt>{page.url ? <A href={page.url}>{page.title}</A> : page.title}</dt>
+                            <dd>{page.description}</dd>
+                        </>
+                    ))}
                 </dl>
             </>
         ))
