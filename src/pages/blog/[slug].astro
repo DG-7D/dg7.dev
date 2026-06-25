@@ -3,9 +3,12 @@ import { Temporal } from "temporal-polyfill-lite";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getSlug, getState } from "./_functions";
-import Img from "@/components/Img.astro";
-import A from "@/components/A.astro";
 import { dateToJSTDateTime, isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
+import A from "@/components/A.astro";
+import Img from "@/components/Img.astro";
+import Tweet from "@/components/Tweet.astro";
+import OGPCard from "@/components/OGPCard.astro";
+
 export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", post => {
         return import.meta.env.DEV || getState(post) == "published";
@@ -54,7 +57,7 @@ const lastUpdateString = (() => {
             )
         }
     </div>
-    <Content components={{ a: A, img: Img }} />
+    <Content components={{ a: A, img: Img, Tweet: Tweet, OGPCard: OGPCard }} />
 </BaseLayout>
 <style>
     div.publishDate {
