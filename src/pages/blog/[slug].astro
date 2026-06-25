@@ -6,6 +6,7 @@ import { getSlug, getState } from "./_functions";
 import { dateToJSTDateTime, isoStringToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
 import A from "@/components/A.astro";
 import Img from "@/components/Img.astro";
+import Table from "@/components/Table.astro";
 import Tweet from "@/components/Tweet.astro";
 import OGPCard from "@/components/OGPCard.astro";
 
@@ -57,7 +58,7 @@ const lastUpdateString = (() => {
             )
         }
     </div>
-    <Content components={{ a: A, img: Img, Tweet: Tweet, OGPCard: OGPCard }} />
+    <Content components={{ a: A, img: Img, table: Table, Tweet: Tweet, OGPCard: OGPCard }} />
 </BaseLayout>
 <style>
     div.publishDate {

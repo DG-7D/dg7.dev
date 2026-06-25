@@ -1,9 +1,11 @@
 import { defineConfig } from 'astro/config';
 import { satteri } from '@astrojs/markdown-satteri';
+
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-
 import robotsTxt from "astro-robots-txt";
+
+import satteriHastUnwrapImages from "@/utils/satteri-hast-unwrap-images";
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,14 +15,11 @@ export default defineConfig({
       theme: "dark-plus",
       wrap: true,
     },
-    processor: satteri(),
-    // TODO: 移植
-    // processor: unified({
-    //   rehypePlugins: [
-    //     [rehypeWrapAll, { selector: "table", wrap: "div" }],
-    //     rehypeUnwrapImages,
-    //   ],
-    // }),
+    processor: satteri({
+      hastPlugins: [
+        satteriHastUnwrapImages
+      ]
+    }),
   },
   integrations: [
     mdx(),
