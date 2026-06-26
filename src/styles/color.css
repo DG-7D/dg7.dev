@@ -1,0 +1,11 @@
+@import url(campbell.css);
+
+:root {
+    color-scheme: light dark;
+    --theme-color: var(--green);
+    --background-color: light-dark(var(--bwhite), var(--black));
+    --main-shadow: light-dark(var(--white), var(--bblack));
+    --main-color: light-dark(var(--black), var(--bwhite));
+    --sub-color: light-dark(var(--bblack), var(--white));
+    --link-color: light-dark(var(--blue), var(--byellow));
+}

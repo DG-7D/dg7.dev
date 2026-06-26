@@ -1,15 +1,5 @@
 @import url(reset.css);
-@import url(campbell.css);
-
-:root {
-    color-scheme: light dark;
-    --theme-color: var(--green);
-    --background-color: light-dark(var(--bwhite), var(--black));
-    --main-shadow: light-dark(var(--white), var(--bblack));
-    --main-color: light-dark(var(--black), var(--bwhite));
-    --sub-color: light-dark(var(--bblack), var(--white));
-    --link-color: light-dark(var(--blue), var(--byellow));
-}
+@import url(color.css);
 
 html {
     color: var(--main-color);
@@ -186,30 +176,6 @@ body {
             }
         }
     }
-
-    /* * 表 */
-    div:has(>table) {
-        overflow-x: auto;
-    }
-
-    table {
-        width: max-content;
-        margin: 0 auto;
-        text-align: center;
-        vertical-align: middle;
-
-        thead,
-        tbody {
-            border: 0.1rem solid var(--main-color);
-            border-style: solid none;
-        }
-
-        th,
-        td {
-            padding: 0 0.25em;
-        }
-    }
-
 
     /* * インライン */
     >* {

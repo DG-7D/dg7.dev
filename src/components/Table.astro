@@ -3,3 +3,26 @@
         <slot />
     </table>
 </div>
+
+<style>
+    div {
+        overflow-x: auto;
+        table {
+            width: max-content;
+            margin: 0 auto;
+            text-align: center;
+            vertical-align: middle;
+
+            thead,
+            tbody {
+                border: 0.1rem solid var(--main-color);
+                border-style: solid none;
+            }
+
+            th,
+            td {
+                padding: 0 0.25em;
+            }
+        }
+    }
+</style>
