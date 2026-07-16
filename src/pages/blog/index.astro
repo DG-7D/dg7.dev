@@ -26,6 +26,7 @@ import { dateToJSTDateTime, toJpDateString } from "@/utils/Date.mjs";
                                     {state != "published" && `${state}: `}
                                     {title}
                                 </a>
+                                &#x20;
                                 <time datetime={publishZdt.toString()}>{toJpDateString(publishZdt)}</time>
                             </dt>
                             <dd>{description}</dd>
