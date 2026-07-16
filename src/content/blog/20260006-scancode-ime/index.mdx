@@ -1,0 +1,77 @@
+---
+publish: false
+title: "レジストリで「IME ON/OFF」キーにリマップする話"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "せつめい"
+---
+
+IMEを切り替えるのに使うキーには色々な派閥があるが、使うIMEによらず通常でないキーを使うためには、IMEが対応している一般的なキーにリマップして対応する方法がある。最近使われるようになった「IME ON/OFF」キーはまさにそれに適したキーと言えるが、新しい概念であるため情報がなかったため、調べてまとめてみた。
+
+## Scancode Map
+
+Windowsのキー入力は、通常のHIDキーボードの場合、キーボードから送られてきたHID Usageを、いったんPS/2のスキャンコードに変換したうえで、最終的には仮想キーコードでアプリに渡される。たとえば、JISキーボードの「英数」やUSキーボードの「Caps Lock」はどちらも、HID Usageの「Keyboard Caps Lock」を送り、スキャンコードは`0x3A`に変換され、配列の設定がJISなら`VK_OEM_ATTN (0xF0)`、USなら`VK_CAPITAL (0x14)`の仮想キーコードに変換される。
+
+あるキーを他のキーのように振る舞わせる(リマップ)場合、スキャンコードの段階で置き換えるか、仮想キーコードの段階で置き換えるかの選択肢がある。後者はPowerToysなど様々なツールで実現することができるが、前者はシステム内で行われることで、レジストリで設定することができる。
+
+方法についてはかなり検索にひっかかりにくいが[公式ドキュメント](https://learn.microsoft.com/en-us/previous-versions/windows/hardware/hid/keyboard-and-mouse-class-drivers#scan-code-mapper-for-keyboards)が存在する。最初の8バイトは`0x00`、次の4バイトはリマップするキーの数+1(終端の0埋め)で、その後はリマップ先のスキャンコード2バイトとリマップ元のスキャンコード2バイトが交互に並ぶ。リトルエンディアンであることとマップ「後」が「先」なことに注意。最後の4バイトは`0x00`で埋める。なお、ここでは適用に再起動が必要とされているが、少なくとも手元の環境では再ログインのみで反映された。
+
+## IME ON/OFFキー
+
+最近のノートPCなどでは、「変換」「無変換」があった位置に「あ」「A」の印字のキーが存在する。[Microsoftのドキュメント](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/keyboard-japan-ime#hid-usage-ps2-scan-code-and-virtual-key-code-for-imeon-key--imeoff-key)によれば、これはただ印字が違うだけでなく、「Keyboard LANG1」「Keyboard LANG2」のHID Usageを送り、`VK_IME_ON (0x16)`, `VK_IME_OFF (0x1A)`の仮想キーコードを送るキーであるとされている。また、IMEはこの仮想キーコードでIME ON/OFFを切り替えるよう求められており、実際Microsoft IMEや[CorvusSKK](https://github.com/nathancorvussolis/corvusskk/blob/30a695f70b7dc9a078b8cc4c6c1ea5daf710e420/installer/config-share/config.xml#L107)などのIMEは標準で対応している。
+
+なお、Magic Keyboardでは同様の位置にある「かな」「英数」もこれと同様に機能したが、MacBookの内蔵キーボードでは違っていた。そもそもHID Usageが違っているか、もしくは、同じHID Usageに独自の処理が行われているのかもしれない(MacBookのほうにはAppleのドライバが当たっている)。
+
+結果を先に述べると、`Scancode Map`でマップ先として`0x72`を指定すると`VK_IME_ON`、`0x71`を指定すると`VK_IME_OFF`に変換された。変換/無変換をIME ON/OFFにリマップしたければ、`72 00 79 00 71 00 7B 00`のような2エントリを追加すればよい。
+
+ここに辿り着くまで紆余曲折あったため、以下にその経緯をまとめる。
+
+## IME ON/OFFキーのスキャンコード
+
+[Microsoftのドキュメント](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/keyboard-japan-ime#hid-usage-ps2-scan-code-and-virtual-key-code-for-imeon-key--imeoff-key)では、IME ON/OFFキーのスキャンコードとして`0xF2`, `0xF1`も記載されているが、これはWindowsが内部で使用する(レジストリでの指定に必要な)Set 1ではなくSet 2と表記されている。試しにこれらへのリマップを試してみたが、Set 1としては存在しないスキャンコードなのか、仮想キーコードは`0xFF`になってしまった。おそらくIME ON/OFFキーを持つPS/2キーボード(Set 2を送信するのが普通らしい)を製造するときに必要な情報であり、内部で使用されているという意味ではないのだろう。そもそも、Set 1においては最上位ビットは解放を示すため、`0xF1`や`0xF2`が押下のスキャンコードとして使われることはないはずである。
+
+キー入力の詳細情報を「[Keymill](https://kts.sakaiweb.com/keymill.html)」を用いて確認してみると、「スキャンコード」は1バイトしかなく、それとは別で「拡張キー」「遷移状態」のフラグが表示されていた。内容的には`WH_KEYBOARD_LL`で取得される[`KBDLLHOOKSTRUCT`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-kbdllhookstruct)構造体と同じで、Windowsが内部で保持している形式に近いものと考えられる。
+
+`KBDLLHOOKSTRUCT`のスキャンコードっぽいメンバの名前は`scanCode`となっていたが、より低いレイヤで使われていると思われる[`KEYBOARD_INPUT_DATA`](https://learn.microsoft.com/en-us/windows/win32/api/ntddkbd/ns-ntddkbd-keyboard_input_data)構造体では`MakeCode`となっている。この説明と、遷移状態が分かれていることと、Keymillで見られるスキャンコードが押下と解放で変わらないことから、このスキャンコードは実際には`MakeCode`と同じもので、`0xE0`や`0xE1`のような拡張キーを示すコードを除いたうえで、残った1バイトの最上位ビットを落として押下時のスキャンコードに正規化したものであると考えられる。
+
+
+
+
+いろいろと調べていると、どこから見つけたか忘れてしまったが、[別の公式ドキュメント](https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input)で「Keyboard LANG1/2」に`0x72`, `0x71`が対応していると記載されているのを発見した。`0xF2`, `0xF1`も併記されていたので怪しいと思ったが、先述の通り`0x72`, `0x71`を`Scancode Map`で指定するとIME ON/OFFとして認識された。
+
+
+「Keyboard LANG1」などはPS/2キーボードには存在しないが、一旦Set 1のスキャンコードに変換する必要があるため、空いていた`0x72`を割り当てたと考えられる。
+
+「MakeCode」は基本的にSet 1のスキャンコードの最下位バイトの最上位ビットを落としたものだが、最上位ビットを落とすことで空いた`0x80`以上の空間をPS/2キーボードに存在しないキーの表現に使っている可能性がある。
+
+| `Scancode Map` | MakeCode | 拡張キー | 遷移状態 | 仮想キーコード |
+| ---- | ---- | ---- | ---- | ---- |
+| PowerToys      | `0xF1` | false |  true | `VK_IME_OFF` |
+| AutoHotKey     | `0xF1` |  true |  true | `VK_IME_OFF` |
+| Magic Keyboard | `0xF1` |  true |  true | `VK_IME_OFF` |
+| Map   `0x02`   | `0x02` | false |  true | `VK_1` |
+| Map   `0x82`   | `0x02` | false |  true | `VK_1` |
+| Map `0xE002`   | `0x02` |  true |  true | `0xFF` |
+| Map   `0xF1`   | `0x71` | false |  true | `0xFF` |
+| Map   `0x71`   | `0xF1` |  true | false | `VK_IME_OFF` |
+| Map `0xE0F1`   | `0x71` |  true |  true | `0xFF` |
+| Map `0xE071`   | `0xF1` |  true | false | `VK_IME_OFF` |
+
+- マップ元は押下コードしか指定しなくてもよい→`Scancode Map`より前に最上位ビットを落とす何かがある
+- `Scancode Map`より後にも最上位ビットを落とす何かがある?
+- `Scancode Map`より後で`0xE0`から拡張キーフラグを立てる何かがある
+- 最上位ビットが立っていても遷移状態フラグが常にtrueになるわけではない
+
+1. HID UsageからSet 1スキャンコードに変換する。この際、前回値と比較し解放だったら最上位ビットを立てる。(`kbdhid.sys` `HidP_TranslateUsagesToI8042ScanCodes`)
+1. MakeCode+拡張キーフラグ+遷移フラグの内部表現に変換する。(`kbdhid`? `KbdHid_InsertScanCodes`?)
+1. `Scancode Map`を適用する。ここで、`Scancode Map`のマップ先の最上位ビット(`KEYBOARD_INPUT_DATA`)
+1. MakeCode+拡張キーフラグから仮想キーコードの情報を追加する。このとき、`0x71`, `0x72`は特別に`0xF1`, `0xF2`に変更される。(`KBDLLHOOKSTRUCT`)
+
+先に`KEYBOARD_INPUT_DATA`構造体の`MakeCode`と`KBDLLHOOKSTRUCT`構造体の`scanCode`は同じではないかと述べたが、`MakeCode`の`0x71`, `0x72`を特別に`scanCode`の`0xF1`, `0xF2`に変換するようにした可能性がある。これより手前の可能性もあるが、`Scancode Map`の適用より後であるはずで、これは「仮想キーコードに変換する直前」とされているから、`MakeCode`を仮想キーコードに変換するタイミングで同時にこの処理が行われていると考えるのが自然である。
+
+しかし、この`0x71`を発するキーを新たにIME ON/OFFとして扱うことになったとき、スキャンコード`0x71`, `0xF1`をMakeCode`0xF1`に変換するようにした可能性がある。MakeCodeは原則スキャンコードを正規化したものだが、スキャンコードそのものではないため、`0x80`以上の空間も使うことができる、というのがキモである。
+
+## あとがき
+
+そもそもなぜこんなことを調べていたかだが、冒頭に述べたようにIME ON/OFFキーの信号を使ってIMEを切り替えるためである。もっとも、これはAutoHotKeyを用いて仮想キーコードを発生させることで実現するため、レジストリの細工は必要ない。しかし、ここでIME ON/OFFを使うのなら普段使わない変換/無変換キーもIME ON/OFFとして機能してほしくなってきたため、スキャンコードレベルでの話も調べることにした。
+
+AutoHotKeyで何をしたのかは次の機会にでも紹介する。
