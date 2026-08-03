@@ -1,0 +1,77 @@
+---
+publish: false
+title: "WSL1でArch Linuxを使う話"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: ""
+---
+
+Arch Linuxはシンプルで簡単な扱いやすいはLinuxディストリビューションだが、以前はWSLに公式対応しておらず、rootfsを自分でインポートするなどしないと使えなかった。それから時は経ち、いつのまにやらArch Linuxは公式にWSLに対応していたが、サポートはWSL2のみとなっていた。ただの軽量仮想マシンを互換レイヤ扱いする趣味はないため、WSL1でも動いてほしい。
+
+## インストール
+
+サポートはされていないが、別にインストールが蹴られるわけではなく、Ubuntu等と同様にインストールできる。
+
+```powershell
+wsl --set-default-version 1
+wsl --install archlinux
+```
+
+## DNS設定
+
+DNSサーバの設定がTailscaleになってしまうので対処する。これはArch Linux固有ではなくWSL1共通。
+
+```bash
+rm /etc/resolv.conf
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+echo "[network]
+generateResolvConf = false" >> /etc/wsl.conf
+exit
+wsl --terminate archlinux
+wsl -d archlinux
+```
+
+## pacmanの設定
+
+さて、インストール直後に`pacman -Syu`を実行しろと言われていたが、そのまま実行しても以下のようなエラーが出る。
+
+```
+error: restricting filesystem access failed because Landlock is not supported by the kernel!
+error: switching to sandbox user 'alpm' failed!
+error: failed to synchronize all databases (failed to retrieve some files)
+```
+
+書いてある通り、カーネル(のふりをしてるWSL1の互換層)がLandlockなるものをサポートしていないためご不満らしい。設定をいじればこれを使わせないようにできるが、エディタすら入っていないのでとりあえず`--disable-sandbox`オプションを付けて実行する。(`sed`とか使えばいいんだろうけどだるいので)
+
+```bash
+pacman -Syu --disable-sandbox
+pacman -S msedit --disable-sandbox
+```
+
+エディタが入ったら`/etc/pacman.conf`の`DownloadUser = alpm`の行をコメントアウトすれば後は普通に`pacman`が使える。
+
+## デフォルトユーザ設定
+
+あとは通常通り煮るなり焼くなり好きにする。ユーザ作成後は以下のコマンドでデフォルトユーザを変更できる。
+
+```powershell
+wsl --manage archlinux --set-default-user (ユーザ名)
+```
+
+## fakeroot-tcp
+
+AURのパッケージを入れたくて`makepkg`を実行すると、以下のようなエラーが出る。
+
+```
+fakeroot, while creating message channels: Function not implemented
+This may be due to a lack of SYSV IPC support.
+fakeroot: error while starting the `faked' daemon.
+```
+
+これは`fakeroot-tcp`を入れれば解決するが、これを入れるためにも`makepkg`が必要(手動でできなくもないがだるい)であり、卵が先か鶏が先か状態になる。少し古いがビルド済みの`fakeroot-tcp`を入手してインストールする。
+
+```bash
+curl -OL https://github.com/yuk7/arch-prebuilt/releases/download/25030100/fakeroot-tcp-1.37-1-x86_64.pkg.tar.zst
+sudo pacman -U fakeroot-tcp-1.37-1-x86_64.pkg.tar.zst
+```
+
+あとはAURから`yay-bin`を入れるなり最新の`fakeroot-tcp`を入れるなりすればよい。
