@@ -1,11 +1,11 @@
 ---
-publish: false
-title: "WSL1でArch Linuxを使う話"
-publishDate: 9999-12-31 00:00:00 +09:00
-description: ""
+publish: true
+title: "WSL1でArch Linuxを使ってみた"
+publishDate: 2026-08-05 19:45:00 +09:00
+description: "公式でWSLに対応したものの、WSL2しかサポートされていないArch LinuxをWSL1で使えそうな感じにした話。"
 ---
 
-Arch Linuxはシンプルで簡単な扱いやすいはLinuxディストリビューションだが、以前はWSLに公式対応しておらず、rootfsを自分でインポートするなどしないと使えなかった。それから時は経ち、いつのまにやらArch Linuxは公式にWSLに対応していたが、サポートはWSL2のみとなっていた。ただの軽量仮想マシンを互換レイヤ扱いする趣味はないため、WSL1でも動いてほしい。
+Arch Linuxはシンプルで簡単な扱いやすいLinuxディストリビューションだが、以前はWSLに公式対応しておらず、rootfsを自分でインポートするなどしないと使えなかった。それから時は経ち、いつのまにやらArch Linuxは公式にWSLに対応していたが、サポートはWSL2のみとなっていた。ただの軽量仮想マシンを互換レイヤ扱いする趣味はないため、WSL1でも動いてほしい。久々にWSLを使う機会があったので、Arch Linuxを使おうと試みたが、少し面倒なことがあったのでメモしておく。
 
 ## インストール
 
@@ -75,3 +75,9 @@ sudo pacman -U fakeroot-tcp-1.37-1-x86_64.pkg.tar.zst
 ```
 
 あとはAURから`yay-bin`を入れるなり最新の`fakeroot-tcp`を入れるなりすればよい。
+
+## あとがき
+
+日常的にWSL含むLinuxを使う習慣はないので、これが常用に耐えるかは謎。
+
+じゃあなぜ試したのかは[工研部報80号](https://l.dg7.dev/buhou80)をご参照のこと。
