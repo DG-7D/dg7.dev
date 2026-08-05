@@ -1,0 +1,51 @@
+---
+publish: false
+title: "WindowsでADS-B受信とfr24feedしてみた"
+publishDate: 2026-08-16 00:00:00 +09:00
+description: " 航空機の位置情報放送であるADS-Bの受信環境をアリエク機材で構築し、WindowsでLinuxカーネルに頼らないFlightradar24への情報提供を実現してみた話。"
+---
+
+このページは工学研究部 部報 第80号に掲載した記事の参考文献のリンク、および訂正、追加情報を掲載するものです。本文は部報をご覧ください。
+
+## 訂正・追加情報
+
+記事中で触れたWSL1でのArch Linuxについては[こちらの記事](/blog/20260805-arch-wsl1/)をご参照ください。
+
+## 参考文献
+
+- [How Flightradar24 works](https://www.flightradar24.com/how-it-works)
+- [Buy RTL-SDR Dongles (RTL2832U)](https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/)
+- [RTL-SDR Blog V.3. Dongles User Guide](https://www.rtl-sdr.com/rtl-sdr-blog-v-3-dongles-user-guide/)
+- [SDR ラジオアンテナ 1090Mhz アンテナ 6DBi SMA オス磁気ベース RTL-SDR Raspberry Pi 航空機 FPV DVB-T ADS-B レシーバー用 - AliExpress 509](https://ja.aliexpress.com/item/1005008959800162.html)
+- [ADS-B グラスファイバーアンテナ 1090MHz オムニアンテナ FPV FlightRadar24 ISM 自動依存放送空中監視アンテナ用](https://ja.aliexpress.com/item/1005012689300934.html)
+- [ADS-B 1090MHZ 標準ヘッドアンテナ 1060-1120MHz 2.0dBi 受信アンテナ SMA 受信アンテナ 航空施設用スペアパーツ](https://ja.aliexpress.com/item/1005012572421203.html)
+- [RTL-SDR Tutorial: Cheap ADS-B Aircraft RADAR](https://www.rtl-sdr.com/adsb-aircraft-radar-with-rtl-sdr/)
+- [Home-brew Compact 6dBi Collinear Antenna](https://martybugs.net/wireless/collinear.cgi)
+- [アンテナ延長ケーブル SMA-JK RG316 1M](https://ja.aliexpress.com/item/1005004025227254.html)
+- [SMAオスコネクター 50オーム 1個](https://ja.aliexpress.com/item/1005006012939708.html)
+- [金メッキSMA-RP-SMAコネクタアダプタ 1個](https://ja.aliexpress.com/item/1005003828201345.html)
+- [アクティブSAWフィルター LNA 433MHz～2.4GHz](https://ja.aliexpress.com/item/1005007903713124.html)
+- [ラムラジオ用の同軸フィードBibestee、低ノイズバンドアンプ、偏光、DCブロック、10mhz-6ghz、rtl、sdr、lna](https://ja.aliexpress.com/item/1005006202818445.html)
+- [Become a Flightradar24 contributor](https://www.flightradar24.com/add-coverage)
+- [Subscription plans](https://www.flightradar24.com/premium)
+- [Share your ADS-B data - Real-time flight tracker](https://www.flightradar24.com/share-your-data)
+- [Build your own ADS-B receiver - Pi24 client for flight tracking](https://www.flightradar24.com/build-your-own)
+- [Windows10でFlightradar24にデータをフィード(ラズパイ無し)](https://note.com/ttyy/n/n96c1a7730722)
+- [antirez/dump1090: Dump1090 is a simple Mode S decoder for RTLSDR devices](https://github.com/antirez/dump1090)
+- [MalcolmRobb/dump1090: Dump1090 is a simple Mode S decoder for RTLSDR devices](https://github.com/MalcolmRobb/dump1090)
+- [mutability/dump1090: Dump1090 is a simple Mode S decoder for RTLSDR devices](https://github.com/mutability/dump1090)
+- [tpainter/dump1090_win: Dump1090 is a simple Mode S decoder for RTLSDR devices](https://github.com/tpainter/dump1090_win)
+- [flightaware/dump1090: Dump1090 is a simple Mode S decoder for RTLSDR devices](https://github.com/flightaware/dump1090)
+- [snake-4/dump1090-fa-win: A fork of dump1090-fa with Windows support.](https://github.com/snake-4/dump1090-fa-win)
+- [wiedehopf/readsb: ADS-B decoder swiss knife](https://github.com/wiedehopf/readsb)
+- [gvanem/Dump1090: A simple ADS-B (Automatic Dependent Surveillance - Broadcast) receiver, decoder and web-server. Needs a RTLSDR USB-stick, SDRplay and/or GNS-Hulc device. For Windows only.](https://github.com/gvanem/Dump1090)
+- [Overview - rtl-sdr - Open Source Mobile Communications](https://osmocom.org/projects/rtl-sdr)
+- [rtlsdrblog/rtl-sdr-blog: Modified Osmocom drivers with enhancements for RTL-SDR Blog V3 and V4 units.](https://github.com/rtlsdrblog/rtl-sdr-blog)
+- [Sパラメータ - Wikipedia](https://ja.wikipedia.org/wiki/S%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF)
+- [USB Type-C - Wikipedia](https://ja.wikipedia.org/wiki/USB_Type-C)
+- [Universal Serial Bus Type-C Cable and Connector Specification Release 2.4](undefined)
+- [Settings for fr24feed.ini about logging - Flightradar24 Forum](https://forum.flightradar24.com/forum/radar-forums/flightradar24-feeding-data-to-flightradar24/226700-settings-for-fr24feed-ini-about-logging)
+- [Quick Start Guide](https://www.rtl-sdr.com/rtl-sdr-quick-start-guide/)
+- [cannot view previously captured files interactively with `ifile` directive · Issue #179 · flightaware/dump1090](https://github.com/flightaware/dump1090/issues/179)
+- [JA33CA - Dornier 228-212NG [8245] - Flightradar24](https://www.flightradar24.com/data/aircraft/ja33ca#40eb4377)
+- [JA33CA - Dornier 228-212NG [8245] - Flightradar24](https://www.flightradar24.com/data/aircraft/ja33ca#40e75f08)
