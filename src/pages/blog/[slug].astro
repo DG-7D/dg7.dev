@@ -17,6 +17,7 @@ export async function getStaticPaths() {
     return blogEntries.map(entry => ({
         params: { slug: getSlug(entry) },
         props: { entry },
+        cacheKey: entry.digest,
     }));
 }
 
