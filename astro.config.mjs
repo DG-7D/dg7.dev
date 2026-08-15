@@ -29,4 +29,7 @@ export default defineConfig({
   prefetch: {
     prefetchAll: true,
   },
+  experimental: {
+    incrementalBuild: true,
+  },
 });
