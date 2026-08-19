@@ -17,66 +17,102 @@ const miscPickups = [
     { title: "数学用英数字記号変換器", url: "/misc/math-converter/", description: "通常のASCII英数字列から数学用英数字記号を生成するツールです。" },
 ];
 
-const otakuSites: { title: string; url: URL; description: string }[] = [
+const otakuSites: { title: string; author: string; url: URL; description: string }[] = [
     {
         title: "ゆいのページ",
+        author: "ゆい",
         url: new URL("https://yuino.dev/"),
-        description: "工学研究部元副部長のページ。手打ちでコシのあるhtml。",
+        description: "工学研究部元副部長。手打ちでコシのあるhtml。",
     },
     {
         title: "すしのへや",
+        author: "すし",
         url: new URL("https://www.sushichan.live/"),
-        description: "Astro製。つよい人が使うとこうなるらしい。<del>ちゃんさぶ</del>",
+        description: "Web系の人。技術が盛られたAstro製。<del>ちゃんさぶ</del>",
     },
     {
         title: "へる破壊財団",
+        author: "へるくん",
         url: new URL("https://helkun.dev/"),
-        description: "Astro製。工学研究部元部長のページ。",
+        description: "工学研究部元部長。Astro製。",
     },
     {
         title: "y-chan's website",
+        author: "Yちゃん",
         url: new URL("https://y-chan.dev/"),
-        description: "Astro製。工学研究部元副部長のページ。",
+        description: "工学研究部元副部長。Astro製。",
     },
     {
         title: "しぐれ煮",
+        author: "しぐれ",
         url: new URL("https://shigureni.pages.dev/"),
-        description: "更新待ってます。",
+        description: "音声の人。更新待ってます。",
     },
     {
         title: "6ca.me",
+        author: "McbeEringi",
         url: new URL("https://6ca.me/"),
-        description: "いろいろつくってるすごいひと。",
+        description: "全てを作ってる人。",
     },
     {
         title: "Tert2's Workshop",
+        author: "Tert2",
         url: new URL("https://tert2.dev/"),
-        description: "CPUとか作ってたひと。",
+        description: "CPUとか作ってた人。",
     },
     {
         title: "mimifuwa.cc",
+        author: "mimifuwacc",
         url: new URL("https://mimifuwa.cc/"),
-        description: "かつてAstro製だった。",
+        description: "Web系の人。技術が盛られたAstro製。",
     },
     {
         title: "Laddgeのページ",
+        author: "Laddge",
         url: new URL("https://laddge.net/"),
-        description: "24生もAstroを使っています。",
+        description: "いろいろ作ってる人。Astro製。",
     },
     {
         title: "はんかくくんのページ",
+        author: "きーた",
         url: new URL("https://hnkk.me/"),
-        description: "更新待ってます2。",
+        description: "かわいい人。更新待ってます2。Astro製。",
     },
     {
         title: "かとうのHomePage",
+        author: "kat0h",
         url: new URL("https://kat0h.com/"),
-        description: "平成のインターネット。工学研究部部長のページ。",
+        description: "工学研究部元部長。平成のインターネット。",
     },
     {
-        title: "なかがわ電機サービス",
-        url: new URL("https://nms.lnln.dev/"),
-        description: "工研部室の鍵とか作ってるすごいひと。",
+        title: "りんりん",
+        author: "りんりん",
+        url: new URL("https://lnln.dev/"),
+        description: "工研部室の鍵とかいろいろ作ってる人。",
+    },
+    {
+        title: "淵野アタリ紐結び研究所",
+        author: "淵野アタリ",
+        url: new URL("https://hutinoatari.dev/"),
+        description: "元祖フルスタックの人。",
+    },
+    {
+        title: "ごっちでぶ",
+        author: "ごっち",
+        url: new URL("https://gotti.dev/"),
+        description: "ネットワークの人。",
+    },
+    {
+        title: "k1h.dev",
+        author: "VOID",
+        url: new URL("https://www.k1h.dev/"),
+        description: "工学研究部元部長。",
+    },
+    {
+        title: "やえ WiKi - おうち工場化計画【電気メモ】",
+        author: "やえ",
+        url: new URL("https://yae.wiki/"),
+        description: "回路の人?",
     },
 ];
 
@@ -179,6 +215,7 @@ const links: { title: string; url: URL; description: string }[] = [
                         <a href={link.url} target="_blank">
                             {link.title}
                         </a>
+                        {` (${link.author})`}
                     </dt>
                     <dd>
                         <Fragment set:html={link.description} />
