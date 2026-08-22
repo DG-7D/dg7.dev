@@ -1,4 +1,3 @@
-import { Temporal } from "temporal-polyfill-lite";
 import { dateToJSTDateTime } from '@/utils/Date.mjs';
 import type { CollectionEntry } from 'astro:content';
 
