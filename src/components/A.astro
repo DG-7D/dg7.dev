@@ -1,7 +1,11 @@
 ---
 interface Props {
-    href: string;
+    href: string | URL;
     title?: string;
+}
+
+if (typeof Astro.props.href !== "string") {
+    Astro.props.href = Astro.props.href.toString();
 }
 
 const external = Astro.props.href.includes("//");
