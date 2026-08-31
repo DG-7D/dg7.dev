@@ -11,4 +11,4 @@ if (external && new URL(Astro.props.href).hostname === "x.com") {
 }
 ---
 
-<a href={Astro.props.href} target={external ? "_blank" : undefined} title={Astro.props.title}><slot /></a>
+<a href={Astro.props.href} target={external ? "_blank" : undefined} title={Astro.props.title} referrerpolicy="strict-origin-when-cross-origin"><slot /></a>

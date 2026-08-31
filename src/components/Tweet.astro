@@ -38,7 +38,7 @@ function textToHtml(tweet: z.infer<typeof tweetScheme>, removeFirstMention = fal
     }
 }
 function toATag(href: string, text: string) {
-    return `<a href="${href}" target="_blank">${text}</a>`;
+    return `<a href="${href}" target="_blank" referrerpolicy="strict-origin-when-cross-origin">${text}</a>`;
 }
 function toTweetUrl(tweet: z.infer<typeof tweetScheme>) {
     return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
@@ -119,7 +119,7 @@ tweet.parent && textToHtml(tweet.parent);
         {
             !Astro.props.hideMedia && tweet.video &&
                 <div class="media">
-                    <video controls controlslist="nodownload " poster={tweet.video.poster}>
+                    <video controls controlslist="nodownload" poster={tweet.video.poster}>
                         {tweet.video.variants.reverse().map(variant => (
                             // なぜかtag=12があると途中で止まることがある
                             <source src={variant.src.replace("?tag=12","")} type={variant.type} />
