@@ -1,5 +1,3 @@
-import { Temporal } from "temporal-polyfill-lite";
-
 export function toJpDateString(date: Temporal.ZonedDateTime | Temporal.PlainDateTime | Temporal.PlainDate): string {
     return date.year + "年" + to02d(date.month) + "月" + to02d(date.day) + "日";
 }
