@@ -1,11 +1,12 @@
 ---
 export const title = "数学用英数字記号変換器";
 export const description = "通常のASCII英数字列から数学用英数字記号を生成するツールです。";
+import A from "@/components/A.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title={title} description={description}>
-    <p>入力欄に文字列を入力すると各種<a href="https://ja.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E7%94%A8%E8%8B%B1%E6%95%B0%E5%AD%97%E8%A8%98%E5%8F%B7" target="_blank">数学用英数字記号</a>に変換された結果が表示されます。数字の斜体とフラクトゥールはありません。英数以外はそのままになります。</p>
+    <p>入力欄に文字列を入力すると各種<A href="https://ja.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E7%94%A8%E8%8B%B1%E6%95%B0%E5%AD%97%E8%A8%98%E5%8F%B7">数学用英数字記号</A>に変換された結果が表示されます。数字の斜体とフラクトゥールはありません。英数以外はそのままになります。</p>
     <textarea id="input" autocomplete="off" autofocus placeholder="ここに文字列を入力">0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</textarea>
     <dl id="output"></dl>
 </BaseLayout>

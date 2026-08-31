@@ -35,7 +35,7 @@ metadata.image && (metadata.image.alt ??= "");
 ---
 
 <Center>
-    <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
+    <a href={url} target="_blank" referrerpolicy="strict-origin-when-cross-origin">
         {(metadata.image && <img {...metadata.image} decoding="async" loading="lazy" />) || (metadata.icon && <img src={metadata.icon} alt="" decoding="async" loading="lazy" />)}
         <div class="detail">
             <div class="title">{metadata.title}</div>
@@ -49,7 +49,7 @@ metadata.image && (metadata.image.alt ??= "");
     * {
         --height: 7rem;
     }
-    
+
     a {
         text-align: initial;
         border: 0.1rem solid var(--main-shadow);

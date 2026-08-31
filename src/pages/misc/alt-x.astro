@@ -1,11 +1,12 @@
 ---
 export const title = "コードポイントから文字に変換するやつ";
 export const description = "入力したUnicodeコードポイントに対応する文字を表示するツールです。";
+import A from "@/components/A.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title={title} description={description}>
-    <p>入力欄にスペース区切りでUnicodeコードポイント(16進数)を入力すると、下に対応する文字列が表示されます。<a href="https://chobitool.com/unicodepoint/" target="_blank">このツール</a>の逆です。16進数の数字として解釈できない部分はそのままになります。なお、Windows 11のメモ帳やMicrosoft Wordなど一部のアプリではAlt+Xを押下すると同じ事ができます。</p>
+    <p>入力欄にスペース区切りでUnicodeコードポイント(16進数)を入力すると、下に対応する文字列が表示されます。<A href="https://chobitool.com/unicodepoint/">このツール</A>の逆です。16進数の数字として解釈できない部分はそのままになります。なお、Windows 11のメモ帳やMicrosoft Wordなど一部のアプリではAlt+Xを押下すると同じ事ができます。</p>
     <textarea id="input" autocomplete="off" autofocus placeholder="ここに数値を入力">5c (バックスラッシュ)&#x20 a5 (円記号)&#x20 4e00 (いち)&#x20 30fc (長音符)&#x20 ff0d (全角ハイフンマイナス)&#x20 2014 (EMダッシュ)&#x20 2500 (罫線) あ 3099 (結合用濁点)&#x20 あ 309a (結合用半濁点)</textarea>
     <div id="output"></div>
 </BaseLayout>

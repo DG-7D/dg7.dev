@@ -197,7 +197,7 @@ const links: { title: string; url: URL; description: string }[] = [
             miscPickups.map(page => (
                 <>
                     <dt>
-                        <a href={page.url}>{page.title}</a>
+                        <A href={page.url}>{page.title}</A>
                     </dt>
                     <dd>{page.description}</dd>
                 </>
@@ -212,9 +212,9 @@ const links: { title: string; url: URL; description: string }[] = [
             otakuSites.map(link => (
                 <>
                     <dt>
-                        <a href={link.url} target="_blank">
+                        <A href={link.url}>
                             {link.title}
-                        </a>
+                        </A>
                         {` (${link.author})`}
                     </dt>
                     <dd>
@@ -230,9 +230,9 @@ const links: { title: string; url: URL; description: string }[] = [
             links.map(link => (
                 <>
                     <dt>
-                        <a href={link.url} target="_blank">
+                        <A href={link.url}>
                             {link.title}
-                        </a>
+                        </A>
                     </dt>
                     <dd>
                         <Fragment set:html={link.description} />
