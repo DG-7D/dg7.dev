@@ -34,12 +34,12 @@ curl.exe -fsSL -o get-platformio.py https://raw.githubusercontent.com/platformio
 
 あとはインストールスクリプトが最後に表示するように、`~\.platformio\penv\Scripts\`にパスを通せば`pio`コマンドが使えるようになる……のだが、このディレクトリには`python.exe`が存在している。つまり、これに従ってしまうと、グローバルにパスの通ったPythonが存在している状態になってしまう。ひどいトラップである。そもそも仮想環境は都度有効化して使うものであって、グローバルにパスを通すものではない。
 
-しかし、諦めるのはまだ早い。以下のように適当なディレクトリ(ここでは`~\.platformio\penv\bin\`)に`pio.exe`へのリンクを作成し、そのディレクトリのほうだけにパスを通せば、`pio`だけにパスが通るようになる。ちなみに、LinuxやmacOSだとvenvの環境は`(環境名)/bin/`に作成されるらしいのでそれをパクった。なお、PlatformIO IDEをVSCodeで使用しつつ、`pio`コマンドも単独で使えるようにしたいという場合は、この手順だけを実行すればよい。
+しかし、諦めるのはまだ早い。以下のように適当なディレクトリ(ここでは`~\.platformio\`、`penv`の中とかだと破壊されるかも)に`pio.exe`へのリンクを作成し、そのディレクトリのほうだけにパスを通せば、`pio`だけにパスが通るようになる。なお、PlatformIO IDEをVSCodeで使用しつつ、`pio`コマンドも単独で使えるようにしたいという場合は、この手順だけを実行すればよい。
 
 ```powershell
-cd ~\.platformio\penv\
+cd ~\.platformio\
 mkdir bin
-fsutil hardlink create .\bin\pio.exe .\Scripts\pio.exe
+fsutil hardlink create pio.exe .\penv\Scripts\pio.exe
 ```
 
 ……なんなんすかねこれ。
