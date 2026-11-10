@@ -18,7 +18,7 @@
     "fetch-site-metadata": "^0.2.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.2",
-    "sass-embedded": "^1.104.1"
+    "@types/bun": "^1.4.4",
+    "sass-embedded": "^1.108.1"
   }
 }
