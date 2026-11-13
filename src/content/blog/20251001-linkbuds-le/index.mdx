@@ -1,0 +1,67 @@
+---
+publish: false
+title: "LinkBuds SのLE AudioをPCで使う"
+publishDate: 2025-10-01 00:00:00 +09:00
+description: "LinkBuds Sの機能を活かして低遅延でゲームをプレイすべく、相性問題のあるLE AudioをPCで使えるようにした話。"
+---
+
+この記事は、[工学研究部 部報 第78号](https://buho.ueckoken.club/78.pdf##page=66)に掲載した記事を、無料公開に際してブログにも転載したものです。掲載時から加筆修正が含まれる場合があります。
+
+### LE Audioとは
+
+自分が現在使用している完全ワイヤレスイヤホンのSONY LinkBuds Sは、SBC, AAC, LDACといったよく聞く規格のほかに、LE Audioにも対応している。LE Audioとは、従来のBluetoothオーディオ(Classic Audio)に代わる新しい規格で、様々な特徴があるが、自分が注目しているのは低遅延であるという点だ。自分はパソコンでゲームをする際にも身軽なTWSを使っているが、遅延が気になることが多い。たとえば、UI操作の効果音などは多くのゲームで問題になる。また、戦車を含む様々な兵器で戦闘するゲームWar Thunderでは、クリックと砲撃音との間に無視できない時間差を感じる。いずれも実害はないが、体験に大きな悪影響を与える。自分は知らないが、もしかしたら歩兵ゲームのようなちょこまかした動きのゲームでは実害もあるかもしれない。なお、aptXはAACよりも低遅延と言われることがあるが、少なくともWindowsと以前使っていたNUARL NT01AXでは明らかな遅延があった。aptX LLならまた違うのかもしれない。
+
+LE Audioであればこのような問題を解決できると考えられるが、LinkBuds Sを使用中にも関わらず遅延を体験していたことから察せられる通り、LE Audioはまだどんなデバイス間でも使えるというものではない。今回は、LinkBuds SのLE Audioを活かすべく、PCでLE Audioを使えるようにした。
+
+### 対応トランスミッタを使う
+
+USB接続のLE Audio対応Bluetoothトランスミッタを使えば、接続機器の設備に関係なくLE Audioを利用できる。刺しかえるだけで容易に機器の変更ができるといったLE Audioに限らない利点もある。これが使えるのなら理想的だが、チップセットごとの相性問題があり、大半の製品が採用しているQualcomm製チップではLinkBuds SなどののAiroha(MediaTekの子会社)製チップ搭載イヤホンでLE Audioが利用できないと言われている。実際、下表に示す通り、LinkBuds SでのLE Audioに対応しているトランスミッタは非常に限られ、単品販売のないものか、高価かつ技適の怪しいものしかない。
+
+| 製品名 | LinkBuds S 対応 | 備考 |
+| ---- | ---- | ---- |
+| Creative BT-W6 | [非対応(公式)](https://jp.creative.com/p/speakers/creative-bt-w6) | |
+| eppfun AK3040Pro MAX | [非対応(ユーザ)](https://x.com/aborne25/status/1880458263956976005) | Qualcommチップセット |
+| Sennhiser BTD 700 | [非対応(ユーザ)](https://watchmono.com/e/sennheiser-btd-700-review-check) | |
+| Creative BT-L4 | [対応(ユーザ)](https://x.com/tuki_tom/status/1855544477144043973) | 単品販売なし(Sound Blaster GH7付属) |
+| FlooGoo FMA120 | [対応(公式)](https://www.flairmesh.com/Dongle/FMA120.html) | 国内販売なし、高価、技適不明 |
+
+## 対応Bluetoothモジュールを使う
+
+PCのBluetoothを直接使う方法であれば、チップセットの相性問題は起きないようである。しかし、LE Audioに対応していると明確になっているものは限られている。Windowsにおいては、単にハードウェア的にBluetooth 5.2以降でアイソクロナス転送に対応しているだけでなく、LE Audio専用の処理を各ベンダがソフトウェアかハードウェアで[実装する必要がある](https://learn.microsoft.com/ja-jp/windows-hardware/drivers/bluetooth/bluetooth-low-energy-audio)。なお、ここでは触れないが、Linuxであればもう少し要件は緩そうであり、それでも[一筋縄ではいかない雰囲気である](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/LE-Audio-+-LC3-support)。
+
+また、どのBluetoothモジュールを使うにせよ、日本国内で合法的に使うには、アンテナとセットになって技適が通っているものを選ぶ必要がある。大手マザーボードメーカーがキット販売しているものなら、入手が容易と思われ、技適も通っている可能性も高いので安心できる。また、標準で搭載しているマザーボードなども多く、情報の多さが期待できる。それ以外にも色々なモジュールが存在するがキリがないので、今回はそういったキットに載るような有名なものについて調べた。
+
+最も有名かつ入手が容易なのはIntel AX210やBE200で、前者はノートPCに標準搭載されていることが多い。しかし、同時に最も面倒な仕様の製品でもある。オーディオ処理部分をハードウェアにオフロードしており、同じモジュールを搭載していても、マザーボード側がIntel Smart Sound Technologyに対応しているかどうかでLE Audioの対応可否が[異なるらしい](https://www.reddit.com/r/windows/comments/1f71gr6/ive_successfully_enabled_bluetooth_le_audio_on/)。デスクトップPCでは最新のCore Ultra世代でないと対応していないという噂もある。AX210のLE Audio利用は成功報告と失敗報告とが混在しているが、ISSTについて情報が提供されていないことが多い。キットとしては、AX210はGIGABYTE GC-WBAX210 (rev. 1.0)、BE200はGIGABYTE GC-WIFI7 1.2、ASUS PCE-BE92BTに搭載されている。自分の環境ではISSTが使えないため選択肢から除外されるが、逆にISSTに対応しているのであれば最も無難な選択肢と言える。
+
+LE Audio対応がかなり確実なのがMediaTek MT7925/7927で、[MediaTek公式](https://www.mediatek.com/products/broadband-wifi/mediatek-filogic-360)でLE Audioサポートを謳っており、また、ASUSのコミュニティフォーラムではLE Audio対応が明記された[ドライバが公開](https://rog-forum.asus.com/t5/downloads-for-motherboards/drivers-amd-mediatek-wifi-bluetooth/td-p/857576)されている。実際使えたという報告もよく見られる。MT7925はTP-Link Archer TBE400E、MT7927はGIGABYTE GC-WIFI7 1.1、TP-Link Archer TBE400Eに搭載されている。
+
+若干怪しいのがRealtek RTL8852で、同様にASUSのフォーラムで対応ドライバが公開されているが、[利用できなかったという報告](https://www.chiphell.com/thread-2584819-1-1.html)もある。知っての通りRealtekはオーディオにも関わっているので、もしかしたらIntelのように別でハードウェアが必要なのかもしれない。RTL8852CEはGIGABYTE GC-WBAX2400Rに搭載されている。
+
+ほぼ絶望的なのがQualcomm NCM865で、Qualcommとしては対応と[主張している](https://www.qualcomm.com/products/technology/wi-fi/fastconnect/fastconnect-7800)ものの、LE Audioが使えたという報告は見当たらない。ASUSのフォーラムのドライバでもLE Audioには言及がない。Microsoft Update Catalogで「LE Audio」と検索すると、Intel, AMD, MediaTek, Realtekはドライバがあるのに、Qualcommは見つからなかった。一応、搭載製品としてはGIGABYTE GC-WIFI7 1.0やMSI HERALD-BE WIFI 7 MAXがある。
+
+わざわざ蟹で冒険する意味もないのでMT7925/7927搭載製品を入手したいところだが、GC-WIFI7はバージョン問わず入手困難(技適こそ通っているが国内販売なし)のようであり、技適を気にするのであればTP-Link Archer TBE400Eが唯一の選択肢となる。
+
+## 使ってみた
+
+取り付けただけではドライバが当たらず(Windows Update上にはありそうなのに)、自分でダウンロードしてきてインストールする必要があった。
+
+WindowsとLinkBuds SとでそれぞれLE Audio有効化の設定を行うと、以前のペアリング情報そのままでするっとLE Audioが使えるようになった。電池残量が左右別で表示されるようになるのが目印である。
+
+![](battery.png "LE Audio接続時の電池残量表示")
+
+早速ゲームをプレイしてみると、明らかに遅延が小さいことが感じ取れた。操作音、発砲音やエンジン音がしっかり映像と同期して聞こえる。特に便利になったり有利になったりするわけではないが、違和感のなさは快適なプレイに寄与する。
+
+音質は主観的な部分が大きいが、AACと大差ないように感じた。ffmpegでエンコードした音源の周波数スペクトル的には[AACには劣るらしい](https://av.watch.impress.co.jp/docs/series/dal/2013135.html)が、WindowsのAACは本来の性能よりもやたら音質が悪いので差が埋まったのだと思われる。Media FoundationでエンコードしてみればWindowsでの音質を評価できるのだろうか? LinkBuds SはaptXには対応していないが、もししていたらaptXに比べて劣る結果になっていたかもしれない。
+
+接続は一度繋がってしまえば特に不安定なことはなかったが、シャットダウンして再度起動すると接続されているのに音が鳴らない状態になってしまうことがあるという問題があった。デバイスマネージャで「オーディオ カーネル モード プロキシ ユニット デバイス」をアンインストールしてから再接続すると復旧する。ドライバはTP-Linkの提供しているもののほか、GIGABYTEやASUSのフォーラムなどから入手できるが、新しい
+バージョンでは頻度が上がるように感じた。ちなみに、TP-Linkの提供するドライバは特にカスタムされているわけではなさそうで、通常のドライバにもTP-Link向けの表示名が定義されている。LE AudioをPCで利用しようとしている人がそもそも少なく、使っていたとしてもIntel AX210環境がほとんどで、これが他のMediaTek環境でも発生する問題なのかどうかは不明である。
+
+## おわりに
+
+情報の少なさや互換性の問題など、まだまだ発展途上の規格であるということを実感した。Classic Audioも昔はこんな具合だったのだろうか。
+
+Qualcommチップのトランスミッタが普通に使えればそれが一番で、Airohaチップのイヤホンは決して無視できるものではないので、Qualcomm以外のチップに対応したトランスミッタがもっと出てくる、もしくはアップデートで対応されることを期待したい。
+
+独自形式やaptX LLなどと違い標準的な規格として低遅延の無線オーディオが利用できるようになるのは素晴らしいことなので、LE Audioが広く普及していくことを願う。
+
+もし今回触れたようなBluetoothモジュールを搭載しているPCをお持ち、もしくはこれから搭載するという方で、LE Audioを試してみたいという方がいれば、ぜひ挑戦し、その結果を全世界に向けて発信していただきたい。
