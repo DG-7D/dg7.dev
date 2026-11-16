@@ -1,37 +1,78 @@
 ---
 publish: false
-title: "PowerShellのお節介なエイリアスを破壊した話"
+title: "PowerShellのお節介なエイリアスを破壊してみた"
 publishDate: 9999-12-31 00:00:00 +09:00
-description: "せつめい"
+description: "Coreutils for Windowsの導入により、PowerShellの組み込みエイリアスが邪魔になったので、コマンドと衝突するエイリアスを削除するスクリプトを作った話。"
 ---
 
 ## POSIXコマンド?
 
-「Linux」の使い心地を実現する要素の一部として、同じようなCLI環境で同じようなコマンドが使える点がある。ここで、「Linux」とはOSの形をしているものであり、Linuxカーネルだけではなく、様々なソフトウェアの組み合わせである。使い心地を最終的に実現しているのも、Linuxカーネル本体というよりは組み合わせられたシェルやコマンドなどである。
+「Linux」の使い心地として期待される要素の一部として、同じようなCLI環境で同じようなコマンドが使える点がある。ここで「Linux」として想定されているものは、Linuxカーネル単体のことではなく、GNUソフトウェアを含む様々なソフトウェアの組み合わせからなるOSで、GNU/Linuxとも呼ばれるものである。使い心地を最終的に実現しているのも、Linuxカーネル本体というよりは、その上で動くシェルやコマンドなどである。
 
-ここで、「同じようなコマンド」として期待されるもののうち、特に重要なのは、POSIXで規定されている「ユーティリティ」だと思われる。`ls`や`cat`などのお馴染みのコマンドで、これもLinuxカーネルに組み込まれているわけではなく、独立したパッケージとして提供されていることが多い。具体的なパッケージとしては専らGNU Coreutilsが用いられるが、Ubuntu 26.04 LTSがRust実装のuutils coreutilsを採用するなど、Linuxカーネルと密接に結合しているわけではなく、交換可能なものである。また、bashなどのシェルに組み込まれているものというわけでもない。
+ここで、「同じようなコマンド」として期待されるもののうち、特に重要なのは、POSIXで規定されているようなコマンドだと思われる。`ls`や`cat`などのお馴染みのコマンドで、これもLinuxカーネルに組み込まれているわけではなく、独立したパッケージとして提供されていることが多い。具体的なパッケージとしては専らGNU Coreutilsが用いられるが、用途によってはBusyBoxだったり、Rust実装のuutils coreutilsだったりと、カーネルからは独立した交換可能なものである。また、これらはシェルの組み込みコマンドというわけでもない。
 
-独立したパッケージであるということは、Unix系でない環境向けに独立したコマンドとして提供されてもまったくおかしな話ではないことになる。実際にWindows向けにも様々な実装があったが、ついにMicrosoftが直々に[Coreutils for Windows](https://github.com/microsoft/coreutils)を提供するに至った。
+また、GNU CoreutilsはPOSIXコマンドそのままの実装ではなく、いくらかの拡張が加えられている。ユーザが期待するのはこの拡張を含めたものであることが多いため、uutils coreutilsなどではGNU版との互換性が重視されている。逆に、macOS標準のコマンドなどではGNU拡張は利用できず、「POSIXコマンド」であっても期待したものではない可能性がある。
 
-ここで問題となったのが、PowerShellのエイリアスである。PowerShellでは、たとえばディレクトリ内のファイルを一覧表示したければ`Get-ChildItem`というコマンドレットを使うが、いちいちこれを打ち込んでいてはお話にならないので、`gci`といったエイリアスも提供されている。また、前身であるコマンドプロンプトの組み込みコマンドに合わせ、`dir`も`Get-ChildItem`に向くようになっている。
+ともかく、GNU/LinuxにおけるPOSIXコマンドは独立したアプリケーションであるため、FreeBSDやmacOSなどLinux以外の環境でもcoreutilsを実装、利用することはできる。さらに、このようなPOSIX準拠の環境でなくとも、比較的面倒になるというだけで移植は可能である。実際にWin32向けにも[GnuWin32](https://gnuwin32.sourceforge.net/)や[BusyBox for Windows](https://frippery.org/busybox/)などの移植があり、また、uutils coreutilsはそもそもクロスプラットフォームでもともとWindowsネイティブ対応となっている。
 
-これだけなら新しいシェルに新しい組み込みコマンドが存在する、というだけの話だったはずなのだが、Microsoftは何を血迷ったのか、これまでコマンドとして存在しなかった`ls`までもを`Get-ChildItem`のエイリアスにしてしまったのである。これは「今まで使えたものが使えるようにする」の範囲を逸脱しており、
-先述したとおり、`ls`はシェルの組み込みコマンドではない。
+しかし、それが可能であるというだけで、コマンドだけ独立で利用しようという動きはあまり主流ではない。ユーザ自身も「Linux」が何なのか理解していないというのもあり(偏見)、MSYS2やWSLといったひとまとまりのPOSIX互換環境に逃げることが多い。
 
-当然Coreutils for Windowsと干渉することになり、
+## Coreutils for Windows
 
+そんななか、何を血迷ったのか、Microsoftが直々に[Coreutils for Windows](https://github.com/microsoft/coreutils)を提供し始めた。WindowsユーザにとってMicrosoftのお墨付きというのは大きなものであり、今まで「WindowsなんだからWindowsのコマンドを使え」と思っていたユーザも、これがあるならPOSIXコマンドを使ってみたくなるものである。(本当はAIエージェント向けという噂もあるのだが、AIくんはPowerShellもゴリゴリ使いこなしてくるので真偽は不明である。)
 
+## PowerShellの組み込みエイリアス
 
+ここで問題となったのが、PowerShellの組み込みのエイリアスである。PowerShellでは、たとえばディレクトリ内のファイルを一覧表示したければ`Get-ChildItem`というコマンドレットを使うが、いちいちこれを打ち込んでいてはお話にならないので、`gci`といったエイリアスが標準で設定されている。また、前身であるコマンドプロンプトの組み込みコマンドに合わせ、`dir`も`Get-ChildItem`に向くようになっている。
 
-POSIXに準拠するための方法として、「OS本体」でなければならないわけではない。WSL2の動作するWindowsもPOSIX準拠と言えてしまう。Linuxカーネルの一部でないbashやcoreutilsでPOSIX環境を作ることが許されるのだから、同様にNTカーネルの一部ではない仮想マシンで作っても怒られる筋合いはない。
+これだけなら新しいシェルに新しい組み込みコマンドが存在する、というだけの話だったはずなのだが、Microsoftは愚かにもこれまでコマンドとして存在しなかった`ls`までもを`Get-ChildItem`のエイリアスにしてしまったのである。これは「今まで使えたものが使えるようにする」の範囲を逸脱しており、また、先述の通り`ls`はBashなどの組み込みコマンドというわけでもないため、「別のシェルと使用感を近づける」のが目的だったとしても不適切である。個人的には、本来別物であるのに上っ面だけ合わせても混乱を増長するだけであり、コマンドプロンプト風のエイリアスも設定すべきでなかったように思う。
 
-## Windows向けのPOSIXコマンド
+また、`where`や`curl`など、Windows標準のコマンドとして存在するものすらエイリアスで上書きされているものがある。`curl.exe`は後から追加されたものなので仕方ないかもしれないが、`where.exe`を潰すのは意味不明である。
 
-Windows向けのコマンド
+このようなエイリアスはこれまでも十分混乱を生んできたのだが、Coreutils for Windowsとは真っ向から衝突してしまうことになる。
 
-BusyBox for Windowsは、Linux環境でも使われることのあるBusyBoxのWindows向け移植版である。BusyBoxはcoreutilsのように1つのバイナリで様々なコマンドを提供するものだが、それを使うためのシェルまで一体となっている。なぜかWinGetに非Unicode版しか登録されていないのは残念。
+## 破壊
 
-Git for WindowsにもいくらかのPOSIXコマンドが含まれている。そもそもGit for WindowsはPOSIX互換環境を用いることでビルドされているが、Gitは内部でシェルスクリプトを利用しているためコマンド
-で、MinGitではない完全版ではbashも含まれている。
+当然Coreutils for Windowsでは組み込みエイリアスへの対策がなされている。しかし、ここではPowerShell自体の入力処理自体に手が加えられており、エイリアス回避のほかにも様々な処理が行われている。個人的には単なるコマンド群以上の余計な仕事をしてほしくないため、これを使うことはできない。ちなみに、`winget`などで対話実行せずにインストールすると強制的にプロファイルに余計な処理が追加されるが、`& "C:\Program Files\coreutils\pwsh-install.ps1" -Action uninstall`などとすると元に戻せる。また、この機能でも`where.exe`などの既存の衝突の面倒までは見てくれない。
+
+そこで、衝突しているエイリアスを自動的に検出して削除するスクリプトを作成した。検出処理には地味に時間がかかるため、あらかじめ検出結果を保存しておき、起動ごとに読み込まれるプロファイルにはそれを削除する処理だけを記述するようにしている。
+
+<OGPCard url="https://github.com/DG-7D/CleanPSAlias" />
+
+手元の環境では以下のようなエイリアスと関数が削除される。`mkdir`がエイリアスではなく関数として実装されていたため、関数も削除するようにしてある。エイリアスはスクリプトでは[使用しないよう求められている](https://learn.microsoft.com/ja-jp/powershell/scripting/learn/shell/using-aliases?view=powershell-7.6#dont-use-aliases-in-scripts)ので気兼ねなく削除できるが、関数はそうではないので、少し危ないかもしれない。
+
+```
+Alias cat : Get-Content -> C:\Program Files\coreutils\bin\cat.exe
+Alias cp : Copy-Item -> C:\Program Files\coreutils\bin\cp.exe
+Alias echo : Write-Output -> C:\Program Files\coreutils\bin\echo.exe
+Alias fc : Format-Custom -> C:\Windows\system32\fc.exe
+Alias ls : Get-ChildItem -> C:\Program Files\coreutils\bin\ls.exe
+Alias mv : Move-Item -> C:\Program Files\coreutils\bin\mv.exe
+Alias pwd : Get-Location -> C:\Program Files\coreutils\bin\pwd.exe
+Alias rm : Remove-Item -> C:\Program Files\coreutils\bin\rm.exe
+Alias rmdir : Remove-Item -> C:\Program Files\coreutils\bin\rmdir.exe
+Alias sleep : Start-Sleep -> C:\Program Files\coreutils\bin\sleep.exe
+Alias sort : Sort-Object -> C:\Program Files\coreutils\bin\sort.exe
+Alias tee : Tee-Object -> C:\Program Files\coreutils\bin\tee.exe
+Alias where : Where-Object -> C:\Windows\system32\where.exe
+Function help -> C:\Windows\system32\help.exe
+Function mkdir -> C:\Program Files\coreutils\bin\mkdir.exe
+```
+
+## Windows向けのPOSIXシェル
+
+今回追加したのはPOSIXコマンドだけだが、Windows上で動作するPOSIX準拠(っぽい?)シェルも存在する。
+
+先に挙げた[BusyBox for Windows](https://frippery.org/busybox/)は、Linux環境でも使われることのあるBusyBoxのWindows向け移植版である。BusyBoxはcoreutilsのように1つのバイナリで様々なコマンドを提供するものだが、それを使うためのシェルまで一体となっている。なぜかWinGetに非Unicode版しか登録されていないのは残念。
+
+また、Git for Windowsは、大半の機能はMinGWによりネイティブで実装されているが、Gitは内部でシェルスクリプトを利用しており、このためにMSYS2のPOSIX互換レイヤも含まれている。MinGitではない完全版のGit for Windowsでは、これを利用して動作するbashも含まれており、これを目的としてインストールする人もいる。なお、MinGitにも最低限のコマンドが含まれているが、なぜか`less`が含まれていないのにページャが明示的に設定されておらず、しばしば`less`がないと怒られる。`winget install jftuga.less`で普通にネイティブの`less`がインストールできる。
+
+互換レイヤに乗った環境でいいのなら、開発環境であるMSYS2そのものを入れたほうが話は早い。`bash`や`zsh`などのシェルを含め、MinGWやMSYS2互換レイヤを用いてビルドされた様々なツールが利用できる。なお、Git Bashともどもデフォだと変なターミナルエミュレータを使わせようとしてくる。
+
+そもそも互換レイヤの使用を許すのであればWSLが存在する。Windows側との統合性は少々低いし、まるごとディストリビューションが入っているので単なる互換レイヤとしては大袈裟すぎるものの、POSIX準拠だけでなくLinux互換である(WSL2はLinuxそのものである)ため、POSIX環境だけではなくLinuxを求めている人も安心である。
 
 ## あとがき
+
+ところで、GNU/LinuxにおいてPOSIXコマンドが単なるアプリケーションとして提供されているように、「POSIX準拠」であるための要素はOSと密接に結びついている必要があるわけではない。言ってしまえば、Windowsだって後乗せのWSLが存在するので[「POSIX準拠」である](https://qiita.com/ko1nksm/items/f257770769ce62436bc1)。つまり、Windowsで満足していないあなたが求めているのはPOSIXやUNIXではなく「GNU/Linux」である。なんならGNUは「GNU is Not Unix」である。言葉は正しく使いましょう。
+
+本題以外のほうが多くなってしまったが、MicrosoftくんはPowerShellの余計なエイリアスをすべて撤去しましょう、てかネイティブのPOSIX互換シェル作ってくれもいいのよ。
