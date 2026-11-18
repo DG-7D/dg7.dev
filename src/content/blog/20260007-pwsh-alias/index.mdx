@@ -1,7 +1,7 @@
 ---
-publish: false
+publish: true
 title: "PowerShellのお節介なエイリアスを破壊してみた"
-publishDate: 9999-12-31 00:00:00 +09:00
+publishDate: 2026-11-18 16:45:00 +09:00
 description: "Coreutils for Windowsの導入により、PowerShellの組み込みエイリアスが邪魔になったので、コマンドと衝突するエイリアスを削除するスクリプトを作った話。"
 ---
 
@@ -73,6 +73,6 @@ Function mkdir -> C:\Program Files\coreutils\bin\mkdir.exe
 
 ## あとがき
 
-ところで、GNU/LinuxにおいてPOSIXコマンドが単なるアプリケーションとして提供されているように、「POSIX準拠」であるための要素はOSと密接に結びついている必要があるわけではない。言ってしまえば、Windowsだって後乗せのWSLが存在するので[「POSIX準拠」である](https://qiita.com/ko1nksm/items/f257770769ce62436bc1)。つまり、Windowsで満足していないあなたが求めているのはPOSIXやUNIXではなく「GNU/Linux」である。なんならGNUは「GNU is Not Unix」である。言葉は正しく使いましょう。
+ところで、GNU/LinuxにおいてPOSIXコマンドが単なるアプリケーションとして提供されているように、「POSIX準拠」であるための要素はOSと密接に結びついている必要があるわけではない。WindowsだってかつてはPOSIX API、今はLinuxの互換レイヤが乗っているので[「POSIX準拠」である](https://qiita.com/ko1nksm/items/f257770769ce62436bc1)。つまり、Windowsで満足していないあなたが求めているのはPOSIXやUNIX、あるいはLinuxカーネルではなく、「GNU/Linux」であり、しかもそのうちのごく限られた一部である。なんならGNUは「GNU is Not Unix」である。言葉は正しく使いましょう。
 
-本題以外のほうが多くなってしまったが、MicrosoftくんはPowerShellの余計なエイリアスをすべて撤去しましょう、てかネイティブのPOSIX互換シェル作ってくれもいいのよ。
+本題以外のほうが多くなってしまったが、MicrosoftくんはPowerShellの余計なエイリアスをすべて撤去しましょう、てかネイティブのPOSIX互換(Bash互換のほうが嬉しいかもね)シェル作ってくれもいいのよ。
