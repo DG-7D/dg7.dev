@@ -15,6 +15,7 @@ const pages: {
         categoryName: "ハードウェア",
         categoryDescription: "形のあるもの。ちょっとソフトウェア要素もあるかもしれない。",
         pages: [
+            { title: "PCファン制御器", description: "PCファンをPD駆動して扇風機代わりにできるやつ。PWM指令と回転数表示ができる。", url: "https://l.dg7.dev/fan" },
             { title: "赤外線信号送信器", description: "任意の赤外線信号をHTTP API経由で自室で送信できるようにするやつ。", url: "/blog/20250009-esp32-rmt/" },
             { title: "イヤホンジャック入力サーボ試験基板", description: "PWM信号を音声としてイヤホンジャックから出力し、それを受け取って増幅してサーボを制御できるようにするやつ。信号生成はWeb UI。", url: "/blog/20250001-phone-pwm/" },
             { title: "RGBファン変換基板", description: "独自端子のRGBファンをマザボのファン端子とARGB端子で制御できるようにするやつ。", url: "/blog/20240010-6pin-fan-pwm/" },
@@ -46,6 +47,7 @@ const pages: {
             { title: "Bambu Studio 複数アカウントランチャー", description: "Bambu Studioの設定ファイルを差し替えることで複数アカウントを切り替えられるようにするWindowsアプリ。Rustとか使ってみちゃったり。", url: "https://github.com/DG-7D/BambuStudioMultiAccountLauncher" },
             { title: "学務情報システム 成績並び替え", description: "電通大の学務情報システムの成績一覧表示を、学期や評定など任意の列で並び替えられるようにするChromium拡張機能。", url: "https://github.com/DG-7D/GakumuJouhouSystem-SortSeiseki" },
             { title: "ゆいのだじゃれデータベース", description: "ゆいのだじゃれを集めるデータベース。簡単に追加するためのスクリプトなどもある。", url: "https://github.com/DG-7D/YuinoDajare" },
+            { title: "プリンタ再起動スクリプト", description: "工研部室のプリンタMF644Cdwを自動で再起動させるためのスクリプト。Web UIをfetchでしばく。" },
             { title: "SimpleStepper", description: "Arduino純正のStepperライブラリよりちょっとマシみたいなステッピングモータ駆動ライブラリ。公開はしてない。" },
         ],
     },
